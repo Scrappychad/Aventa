@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book an Aventa | NanaGraphy</title>
+<meta name="description" content="Book an Aventa for yourself or gift one to someone else. Secure payment via Paystack.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="on-paper">
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="index.html" class="brand">Aventa <span class="sub">by NanaGraphy</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="packages.html">Packages</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="gift.html">Gift Aventa</a>
+      <a href="contact.html">Contact</a>
+      <a href="book.html" class="nav-cta">Book an Aventa</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section style="padding-bottom:0;">
+    <div class="wrap" style="max-width:720px;">
+      <span class="eyebrow">Book Now</span>
+      <h1 style="margin-top:16px;">Let's set up your Aventa.</h1>
+      <p class="lede" style="margin-top:12px;">Choose whether this is for you or a gift, pick a package, and complete payment securely via Paystack.</p>
+    </div>
+  </section>
+
+  <section data-booking-flow>
+    <div class="wrap" style="max-width:720px;">
+
+      <div data-booking-form-wrap>
+        <div class="step-track">
+          <div class="dot done"></div><div class="dot done"></div><div class="dot"></div>
+        </div>
+
+        <div class="toggle-pair" data-mode-toggle></div>
+
+        <div class="ticket form-panel" style="margin-bottom:24px;">
+          <h3 style="margin-bottom:16px;">Choose your package</h3>
+          <div class="pkg-select" data-package-select></div>
+        </div>
+
+        <form id="booking-form" class="ticket form-panel">
+          <h3 style="margin-bottom:18px;">Your details</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label for="buyerName">Your full name</label>
+              <input type="text" id="buyerName" name="buyerName" required>
+            </div>
+            <div class="field">
+              <label for="buyerPhone">Your phone number</label>
+              <input type="tel" id="buyerPhone" name="buyerPhone" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="buyerEmail">Your email</label>
+            <input type="email" id="buyerEmail" name="buyerEmail" required>
+            <div class="field-hint">Your receipt and payment confirmation go here.</div>
+          </div>
+          <div class="field">
+            <label for="preferredDate">Preferred session date</label>
+            <input type="date" id="preferredDate" name="preferredDate">
+            <div class="field-hint">Subject to availability. NanaGraphy will confirm by phone or email.</div>
+          </div>
+
+          <div data-gift-fields style="display:none; margin-top:8px; padding-top:20px; border-top:1px dashed var(--line);">
+            <h3 style="margin-bottom:16px;">Recipient details</h3>
+            <div class="field">
+              <label for="recipientName">Recipient's name</label>
+              <input type="text" id="recipientName" name="recipientName">
+            </div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="recipientPhone">Recipient's phone (optional)</label>
+                <input type="tel" id="recipientPhone" name="recipientPhone">
+              </div>
+              <div class="field">
+                <label for="recipientEmail">Recipient's email (optional)</label>
+                <input type="email" id="recipientEmail" name="recipientEmail">
+              </div>
+            </div>
+            <div class="field">
+              <label for="giftMessage">Your gift message</label>
+              <textarea id="giftMessage" name="giftMessage" placeholder="Write something they'll love reading..."></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="notes">Anything else NanaGraphy should know? (optional)</label>
+            <textarea id="notes" name="notes"></textarea>
+          </div>
+
+          <div class="ticket" style="padding:20px 22px; margin:22px 0 26px; background:var(--paper-dim);">
+            <div data-summary></div>
+          </div>
+
+          <button type="submit" class="btn on-ink block" data-pay-button>Pay</button>
+          <p class="field-hint" style="text-align:center; margin-top:14px;">Payment is processed securely by Paystack. NanaGraphy never sees your card details.</p>
+        </form>
+      </div>
+
+      <div data-confirmation style="display:none;"></div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">Aventa <span style="font-family:var(--mono); font-size:11px; color:var(--gold-bright); letter-spacing:.08em;">BY NANAGRAPHY</span></div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <a href="about.html">About</a>
+          <a href="packages.html">Packages</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="gift.html">Gift Aventa</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="https://wa.me/2340000000000" target="_blank">WhatsApp</a>
+          <a href="https://instagram.com/nanagraphy" target="_blank">Instagram</a>
+          <a href="https://tiktok.com/@nanagraphy" target="_blank">TikTok</a>
+          <a href="mailto:hello@nanagraphy.com">Email</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 NanaGraphy. All rights reserved.</span>
+      <span>Aventa passes are valid until redeemed per NanaGraphy's redemption policy.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
