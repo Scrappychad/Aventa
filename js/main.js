@@ -95,10 +95,11 @@ function initNav() {
 }
 
 function setActiveNav() {
-  const path = window.location.pathname.split("/").pop() || "index.html";
+  // With cleanUrls, the browser shows paths like "/about", not "about.html".
+  const path = window.location.pathname.replace(/\/$/, "") || "/";
   document.querySelectorAll(".nav-links a").forEach((a) => {
     const href = a.getAttribute("href");
-    if (href === path) a.classList.add("active");
+    if (href === path || (path === "/" && href === "/")) a.classList.add("active");
   });
 }
 
@@ -165,7 +166,7 @@ function renderPackageCards() {
       <div class="stub-divider"></div>
       <ul>${p.features.map((f) => `<li>${f}</li>`).join("")}</ul>
       <div class="fine">${p.fine}</div>
-      <a class="btn ${p.featured ? "on-ink" : "ghost"} block" href="book.html?package=${p.id}">Choose ${p.name}</a>
+      <a class="btn ${p.featured ? "on-ink" : "ghost"} block" href="/book?package=${p.id}">Choose ${p.name}</a>
     </div>`
   ).join("");
 }
