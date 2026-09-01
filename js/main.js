@@ -11,7 +11,7 @@
    ========================================================= */
 
 // CONFIGURE: replace with your live Paystack public key
-const PAYSTACK_PUBLIC_KEY = "pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY";
+const PAYSTACK_PUBLIC_KEY = "pk_test_b6bc7b85ee6f1c8e8e3a13259013efd7a293c411";
 
 // Vercel serverless function that emails Nana via Resend. No key lives
 // here — the Resend API key stays server-side inside that function.
