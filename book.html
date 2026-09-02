@@ -66,6 +66,7 @@
             <div class="field">
               <label for="buyerName">Your full name</label>
               <input type="text" id="buyerName" name="buyerName" required>
+              <div class="field-error" data-error-for="buyerName"></div>
             </div>
             <div class="field">
               <label for="buyerPhone">Your phone number</label>
@@ -74,12 +75,14 @@
                 <input type="tel" id="buyerPhone" name="buyerPhone" inputmode="numeric" data-phone-number required>
               </div>
               <div class="field-hint">Digits only, without the leading 0.</div>
+              <div class="field-error" data-error-for="buyerPhone"></div>
             </div>
           </div>
           <div class="field">
             <label for="buyerEmail">Your email</label>
             <input type="email" id="buyerEmail" name="buyerEmail" required>
             <div class="field-hint">Your receipt and payment confirmation go here.</div>
+            <div class="field-error" data-error-for="buyerEmail"></div>
           </div>
           <div class="field">
             <label for="preferredDate">Preferred session date</label>
@@ -92,6 +95,7 @@
             <div class="field">
               <label for="recipientName">Recipient's name</label>
               <input type="text" id="recipientName" name="recipientName">
+              <div class="field-error" data-error-for="recipientName"></div>
             </div>
             <div class="grid-2">
               <div class="field">
@@ -101,6 +105,7 @@
                   <input type="tel" id="recipientPhone" name="recipientPhone" inputmode="numeric" data-phone-number>
                 </div>
                 <div class="field-hint">Digits only, without the leading 0.</div>
+                <div class="field-error" data-error-for="recipientPhone"></div>
               </div>
               <div class="field">
                 <label for="recipientEmail">Recipient's email (optional)</label>

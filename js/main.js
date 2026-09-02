@@ -11,7 +11,7 @@
    ========================================================= */
 
 // CONFIGURE: replace with your live Paystack public key
-const PAYSTACK_PUBLIC_KEY = "pk_test_45e128abb6c08ce3c7afba44f0a6c538b41c2a45";
+const PAYSTACK_PUBLIC_KEY = "pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY";
 
 // Vercel serverless function that emails Nana via Resend. No key lives
 // here — the Resend API key stays server-side inside that function.
@@ -386,11 +386,54 @@ function initBookingFlow() {
     return number ? `+${dial}${number}` : "";
   }
 
+  // Shows/clears an inline message under a given field instead of a
+  // browser alert() popup — name matches each input's data-error-for.
+  function setFieldError(form, name, message) {
+    const errorEl = form.querySelector(`[data-error-for="${name}"]`);
+    const fieldEl = errorEl ? errorEl.closest(".field") : null;
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.toggle("show", !!message);
+    }
+    if (fieldEl) fieldEl.classList.toggle("has-error", !!message);
+  }
+
+  function clearAllFieldErrors(form) {
+    form.querySelectorAll(".field-error").forEach((el) => {
+      el.textContent = "";
+      el.classList.remove("show");
+    });
+    form.querySelectorAll(".field.has-error").forEach((el) => el.classList.remove("has-error"));
+  }
+
   function wireForm() {
     const form = root.querySelector("#booking-form");
     if (!form) return;
+
+    // Clear a field's error the moment the person starts fixing it.
+    ["buyerName", "buyerEmail", "recipientName"].forEach((fieldName) => {
+      const input = form.elements[fieldName];
+      if (input) input.addEventListener("input", () => setFieldError(form, fieldName, ""));
+    });
+    form.querySelectorAll("[data-phone-number], [data-phone-code]").forEach((el) => {
+      el.addEventListener("input", () => {
+        const wrapper = el.closest("[data-buyer-phone-field], [data-recipient-phone-field]");
+        if (!wrapper) return;
+        const name = wrapper.hasAttribute("data-buyer-phone-field") ? "buyerPhone" : "recipientPhone";
+        setFieldError(form, name, "");
+      });
+      el.addEventListener("change", () => {
+        const wrapper = el.closest("[data-buyer-phone-field], [data-recipient-phone-field]");
+        if (!wrapper) return;
+        const name = wrapper.hasAttribute("data-buyer-phone-field") ? "buyerPhone" : "recipientPhone";
+        setFieldError(form, name, "");
+      });
+    });
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      clearAllFieldErrors(form);
+
       const pkg = currentPackage();
       const buyerName = form.buyerName.value.trim();
       const buyerEmail = form.buyerEmail.value.trim();
@@ -398,17 +441,27 @@ function initBookingFlow() {
       const preferredDate = form.preferredDate.value;
       const notes = form.notes.value.trim();
 
-      if (!buyerName || !buyerEmail || !buyerPhone) {
-        alert("Please fill in your name, email and phone number.");
-        return;
+      let hasError = false;
+
+      if (!buyerName) {
+        setFieldError(form, "buyerName", "Please enter your name.");
+        hasError = true;
+      } else if (!looksLikeAName(buyerName)) {
+        setFieldError(form, "buyerName", "Please enter a valid name.");
+        hasError = true;
       }
-      if (!looksLikeAName(buyerName)) {
-        alert("Please enter a valid name.");
-        return;
+
+      if (!buyerEmail) {
+        setFieldError(form, "buyerEmail", "Please enter your email.");
+        hasError = true;
       }
-      if (buyerPhone.replace(/\D/g, "").length > E164_MAX_DIGITS) {
-        alert("That phone number is too long. International numbers max out at 15 digits, including the country code.");
-        return;
+
+      if (!buyerPhone) {
+        setFieldError(form, "buyerPhone", "Please enter your phone number.");
+        hasError = true;
+      } else if (buyerPhone.replace(/\D/g, "").length > E164_MAX_DIGITS) {
+        setFieldError(form, "buyerPhone", "That's too long — international numbers max out at 15 digits, including the country code.");
+        hasError = true;
       }
 
       const bookingDetails = {
@@ -423,18 +476,25 @@ function initBookingFlow() {
         bookingDetails.recipientPhone = getFullPhoneNumber("[data-recipient-phone-field]");
         bookingDetails.recipientEmail = form.recipientEmail.value.trim();
         bookingDetails.giftMessage = form.giftMessage.value.trim();
+
         if (!bookingDetails.recipientName) {
-          alert("Please add the recipient's name.");
-          return;
+          setFieldError(form, "recipientName", "Please add the recipient's name.");
+          hasError = true;
+        } else if (!looksLikeAName(bookingDetails.recipientName)) {
+          setFieldError(form, "recipientName", "Please enter a valid name.");
+          hasError = true;
         }
-        if (!looksLikeAName(bookingDetails.recipientName)) {
-          alert("Please enter a valid name for the recipient.");
-          return;
-        }
+
         if (bookingDetails.recipientPhone.replace(/\D/g, "").length > E164_MAX_DIGITS) {
-          alert("The recipient's phone number is too long. International numbers max out at 15 digits, including the country code.");
-          return;
+          setFieldError(form, "recipientPhone", "That's too long — international numbers max out at 15 digits, including the country code.");
+          hasError = true;
         }
+      }
+
+      if (hasError) {
+        const firstError = form.querySelector(".field-error.show");
+        if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
       }
 
       startPayment(pkg, bookingDetails, buyerEmail);

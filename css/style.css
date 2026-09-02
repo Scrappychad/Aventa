@@ -16,6 +16,7 @@
   --gold:       #B8892B;   /* foil stamp / price / accent */
   --gold-bright:#D9AC4F;
   --wine:       #5C2A3A;   /* deep plum, for depth and gifting warmth */
+  --error:      #A63B32;   /* warm red, kept in the same family as wine */
   --stone:      #8A8175;   /* muted secondary ink on paper */
   --stone-dark: #5B564C;
   --line:       rgba(23,21,27,0.14);
@@ -301,6 +302,12 @@ section{ padding:88px 0; }
   .phone-field .phone-code{ flex:none; width:100%; }
 }
 .field-hint{ font-size:12.5px; color:var(--stone); margin-top:6px; }
+.field-error{
+  font-size:12.5px; color:var(--error); margin-top:6px;
+  display:none; font-weight:500;
+}
+.field-error.show{ display:block; }
+.field.has-error input, .field.has-error select{ border-color:var(--error); }
 .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 @media (max-width:560px){ .grid-2{ grid-template-columns:1fr; } }
 
