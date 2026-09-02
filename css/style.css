@@ -154,6 +154,7 @@ p{ margin:0 0 1em; color:var(--stone-dark); }
   border:1px solid var(--line);
   border-radius:6px;
   box-shadow:0 24px 50px -30px rgba(23,21,27,0.35);
+  overflow:hidden; /* clips the punch-hole circles into a clean notch at the edge, and guards against any horizontal bleed on narrow screens */
 }
 .ticket .stub-divider{
   position:relative;
@@ -288,6 +289,17 @@ section{ padding:88px 0; }
 }
 .field input:focus, .field select:focus, .field textarea:focus{ outline:2px solid var(--gold); outline-offset:1px; }
 .field textarea{ resize:vertical; min-height:90px; }
+.phone-field{ display:flex; gap:8px; }
+.phone-field .phone-code{
+  flex:0 0 128px; padding:13px 8px; font-family:var(--body); font-size:14px;
+  background:var(--paper); border:1px solid var(--line); border-radius:3px; color:var(--ink);
+}
+.phone-field input{ flex:1; min-width:0; }
+.phone-field .phone-code:focus, .phone-field input:focus{ outline:2px solid var(--gold); outline-offset:1px; }
+@media (max-width:400px){
+  .phone-field{ flex-direction:column; }
+  .phone-field .phone-code{ flex:none; width:100%; }
+}
 .field-hint{ font-size:12.5px; color:var(--stone); margin-top:6px; }
 .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 @media (max-width:560px){ .grid-2{ grid-template-columns:1fr; } }
@@ -359,6 +371,10 @@ section{ padding:88px 0; }
 .footer-top{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; margin-bottom:40px; }
 .footer-brand{ font-family:var(--display); font-size:1.3rem; color:var(--paper); }
 .footer-cols{ display:flex; gap:64px; flex-wrap:wrap; }
+@media (max-width:560px){
+  .footer-cols{ gap:36px; width:100%; }
+  .footer-col{ min-width:0; }
+}
 .footer-col h4{ font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:14px; font-weight:400; }
 .footer-col a{ display:block; font-size:14px; padding:6px 0; color:rgba(245,239,227,0.72); }
 .footer-col a:hover{ color:var(--paper); }

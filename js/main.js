@@ -17,6 +17,72 @@ const PAYSTACK_PUBLIC_KEY = "pk_test_45e128abb6c08ce3c7afba44f0a6c538b41c2a45";
 // here — the Resend API key stays server-side inside that function.
 const NOTIFY_ENDPOINT = "/api/notify-booking";
 
+// ITU-T country calling codes. Value stored is digits only, no "+".
+// Nigeria first since that's the home market; rest alphabetical by name.
+const COUNTRY_CODES = [
+  ["NG", "Nigeria", "234"],
+  ["GH", "Ghana", "233"],
+  ["KE", "Kenya", "254"],
+  ["ZA", "South Africa", "27"],
+  ["US", "United States", "1"],
+  ["CA", "Canada", "1"],
+  ["GB", "United Kingdom", "44"],
+  ["AE", "United Arab Emirates", "971"],
+  ["AF", "Afghanistan", "93"], ["AL", "Albania", "355"], ["DZ", "Algeria", "213"],
+  ["AR", "Argentina", "54"], ["AM", "Armenia", "374"], ["AU", "Australia", "61"],
+  ["AT", "Austria", "43"], ["AZ", "Azerbaijan", "994"], ["BH", "Bahrain", "973"],
+  ["BD", "Bangladesh", "880"], ["BY", "Belarus", "375"], ["BE", "Belgium", "32"],
+  ["BJ", "Benin", "229"], ["BO", "Bolivia", "591"], ["BA", "Bosnia and Herzegovina", "387"],
+  ["BW", "Botswana", "267"], ["BR", "Brazil", "55"], ["BG", "Bulgaria", "359"],
+  ["BF", "Burkina Faso", "226"], ["BI", "Burundi", "257"], ["KH", "Cambodia", "855"],
+  ["CM", "Cameroon", "237"], ["CV", "Cape Verde", "238"], ["CF", "Central African Republic", "236"],
+  ["TD", "Chad", "235"], ["CL", "Chile", "56"], ["CN", "China", "86"],
+  ["CO", "Colombia", "57"], ["CG", "Congo", "242"], ["CD", "Congo (DRC)", "243"],
+  ["CR", "Costa Rica", "506"], ["CI", "Côte d'Ivoire", "225"], ["HR", "Croatia", "385"],
+  ["CU", "Cuba", "53"], ["CY", "Cyprus", "357"], ["CZ", "Czech Republic", "420"],
+  ["DK", "Denmark", "45"], ["DJ", "Djibouti", "253"], ["DO", "Dominican Republic", "1"],
+  ["EC", "Ecuador", "593"], ["EG", "Egypt", "20"], ["SV", "El Salvador", "503"],
+  ["EE", "Estonia", "372"], ["ET", "Ethiopia", "251"], ["FJ", "Fiji", "679"],
+  ["FI", "Finland", "358"], ["FR", "France", "33"], ["GA", "Gabon", "241"],
+  ["GM", "Gambia", "220"], ["GE", "Georgia", "995"], ["DE", "Germany", "49"],
+  ["GR", "Greece", "30"], ["GT", "Guatemala", "502"], ["GN", "Guinea", "224"],
+  ["GY", "Guyana", "592"], ["HT", "Haiti", "509"], ["HN", "Honduras", "504"],
+  ["HK", "Hong Kong", "852"], ["HU", "Hungary", "36"], ["IS", "Iceland", "354"],
+  ["IN", "India", "91"], ["ID", "Indonesia", "62"], ["IR", "Iran", "98"],
+  ["IQ", "Iraq", "964"], ["IE", "Ireland", "353"], ["IL", "Israel", "972"],
+  ["IT", "Italy", "39"], ["JM", "Jamaica", "1"], ["JP", "Japan", "81"],
+  ["JO", "Jordan", "962"], ["KZ", "Kazakhstan", "7"], ["KW", "Kuwait", "965"],
+  ["LA", "Laos", "856"], ["LV", "Latvia", "371"], ["LB", "Lebanon", "961"],
+  ["LS", "Lesotho", "266"], ["LR", "Liberia", "231"], ["LY", "Libya", "218"],
+  ["LT", "Lithuania", "370"], ["LU", "Luxembourg", "352"], ["MG", "Madagascar", "261"],
+  ["MW", "Malawi", "265"], ["MY", "Malaysia", "60"], ["ML", "Mali", "223"],
+  ["MT", "Malta", "356"], ["MR", "Mauritania", "222"], ["MU", "Mauritius", "230"],
+  ["MX", "Mexico", "52"], ["MD", "Moldova", "373"], ["MC", "Monaco", "377"],
+  ["MN", "Mongolia", "976"], ["ME", "Montenegro", "382"], ["MA", "Morocco", "212"],
+  ["MZ", "Mozambique", "258"], ["MM", "Myanmar", "95"], ["NA", "Namibia", "264"],
+  ["NP", "Nepal", "977"], ["NL", "Netherlands", "31"], ["NZ", "New Zealand", "64"],
+  ["NI", "Nicaragua", "505"], ["NE", "Niger", "227"], ["NO", "Norway", "47"],
+  ["OM", "Oman", "968"], ["PK", "Pakistan", "92"], ["PA", "Panama", "507"],
+  ["PY", "Paraguay", "595"], ["PE", "Peru", "51"], ["PH", "Philippines", "63"],
+  ["PL", "Poland", "48"], ["PT", "Portugal", "351"], ["QA", "Qatar", "974"],
+  ["RO", "Romania", "40"], ["RU", "Russia", "7"], ["RW", "Rwanda", "250"],
+  ["SA", "Saudi Arabia", "966"], ["SN", "Senegal", "221"], ["RS", "Serbia", "381"],
+  ["SC", "Seychelles", "248"], ["SL", "Sierra Leone", "232"], ["SG", "Singapore", "65"],
+  ["SK", "Slovakia", "421"], ["SI", "Slovenia", "386"], ["SO", "Somalia", "252"],
+  ["KR", "South Korea", "82"], ["SS", "South Sudan", "211"], ["ES", "Spain", "34"],
+  ["LK", "Sri Lanka", "94"], ["SD", "Sudan", "249"], ["SR", "Suriname", "597"],
+  ["SE", "Sweden", "46"], ["CH", "Switzerland", "41"], ["SY", "Syria", "963"],
+  ["TW", "Taiwan", "886"], ["TZ", "Tanzania", "255"], ["TH", "Thailand", "66"],
+  ["TG", "Togo", "228"], ["TT", "Trinidad and Tobago", "1"], ["TN", "Tunisia", "216"],
+  ["TR", "Turkey", "90"], ["UG", "Uganda", "256"], ["UA", "Ukraine", "380"],
+  ["UY", "Uruguay", "598"], ["UZ", "Uzbekistan", "998"], ["VE", "Venezuela", "58"],
+  ["VN", "Vietnam", "84"], ["YE", "Yemen", "967"], ["ZM", "Zambia", "260"],
+  ["ZW", "Zimbabwe", "263"]
+];
+
+// E.164 hard cap: max 15 digits total (country code + national number).
+const E164_MAX_DIGITS = 15;
+
 // Single source of truth for packages, used on Packages and Book pages.
 const AVENTA_PACKAGES = [
   {
@@ -107,6 +173,18 @@ function setActiveNav() {
 function initReveal() {
   const items = document.querySelectorAll(".reveal");
   if (!items.length) return;
+
+  // Safety net: if IntersectionObserver isn't available, or if the
+  // browser never fires it for any reason, don't leave content stuck
+  // invisible — this matters on slower mobile connections where a
+  // reveal-in animation is a nice-to-have, but hidden content is not.
+  const forceVisible = () => items.forEach((i) => i.classList.add("in"));
+
+  if (typeof IntersectionObserver === "undefined") {
+    forceVisible();
+    return;
+  }
+
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
@@ -119,6 +197,10 @@ function initReveal() {
     { threshold: 0.12 }
   );
   items.forEach((i) => io.observe(i));
+
+  // Belt-and-suspenders: if something above ever fails silently,
+  // reveal everything after 2s no matter what.
+  setTimeout(forceVisible, 2000);
 }
 
 /* ---------- FAQ accordion ---------- */
@@ -185,6 +267,7 @@ function initBookingFlow() {
   renderModeToggle();
   renderPackageSelect();
   renderSummary();
+  initPhoneFields();
   wireForm();
 
   function renderModeToggle() {
@@ -258,6 +341,51 @@ function initBookingFlow() {
     return /[a-zA-Z\u00C0-\u024F]/.test(value);
   }
 
+  // Populates both country-code dropdowns and enforces the E.164 15-digit
+  // cap (country code + national number, digits only) as the person types.
+  function initPhoneFields() {
+    const codeSelects = root.querySelectorAll("[data-phone-code]");
+    codeSelects.forEach((select) => {
+      select.innerHTML = COUNTRY_CODES.map(
+        ([iso, name, dial]) => `<option value="${dial}">${name} (+${dial})</option>`
+      ).join("");
+    });
+
+    const phoneFields = root.querySelectorAll(".phone-field");
+    phoneFields.forEach((field) => {
+      const codeSelect = field.querySelector("[data-phone-code]");
+      const numberInput = field.querySelector("[data-phone-number]");
+      if (!codeSelect || !numberInput) return;
+
+      const applyCap = () => {
+        const dial = codeSelect.value || "0";
+        const maxNumberDigits = Math.max(1, E164_MAX_DIGITS - dial.length);
+        numberInput.setAttribute("maxlength", String(maxNumberDigits));
+        if (numberInput.value.length > maxNumberDigits) {
+          numberInput.value = numberInput.value.slice(0, maxNumberDigits);
+        }
+      };
+
+      numberInput.addEventListener("input", () => {
+        // Digits only — strips spaces, dashes, letters as the person types.
+        numberInput.value = numberInput.value.replace(/\D/g, "");
+        applyCap();
+      });
+      codeSelect.addEventListener("change", applyCap);
+      applyCap();
+    });
+  }
+
+  // Combines a field's selected dial code + entered digits into one
+  // E.164-style value ("+2348012345678"), or "" if the number is empty.
+  function getFullPhoneNumber(fieldSelector) {
+    const field = root.querySelector(fieldSelector);
+    if (!field) return "";
+    const dial = field.querySelector("[data-phone-code]").value;
+    const number = field.querySelector("[data-phone-number]").value.trim();
+    return number ? `+${dial}${number}` : "";
+  }
+
   function wireForm() {
     const form = root.querySelector("#booking-form");
     if (!form) return;
@@ -266,7 +394,7 @@ function initBookingFlow() {
       const pkg = currentPackage();
       const buyerName = form.buyerName.value.trim();
       const buyerEmail = form.buyerEmail.value.trim();
-      const buyerPhone = form.buyerPhone.value.trim();
+      const buyerPhone = getFullPhoneNumber("[data-buyer-phone-field]");
       const preferredDate = form.preferredDate.value;
       const notes = form.notes.value.trim();
 
@@ -276,6 +404,10 @@ function initBookingFlow() {
       }
       if (!looksLikeAName(buyerName)) {
         alert("Please enter a valid name.");
+        return;
+      }
+      if (buyerPhone.replace(/\D/g, "").length > E164_MAX_DIGITS) {
+        alert("That phone number is too long. International numbers max out at 15 digits, including the country code.");
         return;
       }
 
@@ -288,7 +420,7 @@ function initBookingFlow() {
 
       if (state.mode === "gift") {
         bookingDetails.recipientName = form.recipientName.value.trim();
-        bookingDetails.recipientPhone = form.recipientPhone.value.trim();
+        bookingDetails.recipientPhone = getFullPhoneNumber("[data-recipient-phone-field]");
         bookingDetails.recipientEmail = form.recipientEmail.value.trim();
         bookingDetails.giftMessage = form.giftMessage.value.trim();
         if (!bookingDetails.recipientName) {
@@ -297,6 +429,10 @@ function initBookingFlow() {
         }
         if (!looksLikeAName(bookingDetails.recipientName)) {
           alert("Please enter a valid name for the recipient.");
+          return;
+        }
+        if (bookingDetails.recipientPhone.replace(/\D/g, "").length > E164_MAX_DIGITS) {
+          alert("The recipient's phone number is too long. International numbers max out at 15 digits, including the country code.");
           return;
         }
       }

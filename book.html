@@ -6,6 +6,8 @@
 <title>Book an Aventa | NanaGraphy</title>
 <meta name="description" content="Book an Aventa for yourself or gift one to someone else. Secure payment via Paystack.">
 <link rel="stylesheet" href="css/style.css">
+<noscript><style>.reveal{opacity:1 !important;transform:none !important;}</style></noscript>
+
 </head>
 <body class="on-paper">
 
@@ -37,6 +39,15 @@
   <section data-booking-flow>
     <div class="wrap" style="max-width:720px;">
 
+      <noscript>
+        <style>[data-booking-form-wrap]{ display:none; }</style>
+        <div class="ticket form-panel" style="margin-bottom:24px; text-align:center;">
+          <h3 style="margin-bottom:10px;">This page needs JavaScript enabled</h3>
+          <p style="margin-bottom:18px;">Your browser has JavaScript turned off, so the booking form can't load. You can still reach NanaGraphy directly to book or gift an Aventa:</p>
+          <a href="https://wa.me/2340000000000" class="btn on-ink" target="_blank">Message on WhatsApp</a>
+        </div>
+      </noscript>
+
       <div data-booking-form-wrap>
         <div class="step-track">
           <div class="dot done"></div><div class="dot done"></div><div class="dot"></div>
@@ -58,7 +69,11 @@
             </div>
             <div class="field">
               <label for="buyerPhone">Your phone number</label>
-              <input type="tel" id="buyerPhone" name="buyerPhone" required>
+              <div class="phone-field" data-buyer-phone-field>
+                <select id="buyerPhoneCode" name="buyerPhoneCode" class="phone-code" data-phone-code></select>
+                <input type="tel" id="buyerPhone" name="buyerPhone" inputmode="numeric" data-phone-number required>
+              </div>
+              <div class="field-hint">Digits only, without the leading 0.</div>
             </div>
           </div>
           <div class="field">
@@ -81,7 +96,11 @@
             <div class="grid-2">
               <div class="field">
                 <label for="recipientPhone">Recipient's phone (optional)</label>
-                <input type="tel" id="recipientPhone" name="recipientPhone">
+                <div class="phone-field" data-recipient-phone-field>
+                  <select id="recipientPhoneCode" name="recipientPhoneCode" class="phone-code" data-phone-code></select>
+                  <input type="tel" id="recipientPhone" name="recipientPhone" inputmode="numeric" data-phone-number>
+                </div>
+                <div class="field-hint">Digits only, without the leading 0.</div>
               </div>
               <div class="field">
                 <label for="recipientEmail">Recipient's email (optional)</label>
