@@ -252,6 +252,12 @@ function initBookingFlow() {
     }
   }
 
+  // A real name needs at least one letter — blocks "12345", "!!!", etc.
+  // Allows accented letters, hyphens, apostrophes, spaces (Mary-Jane, O'Neil).
+  function looksLikeAName(value) {
+    return /[a-zA-Z\u00C0-\u024F]/.test(value);
+  }
+
   function wireForm() {
     const form = root.querySelector("#booking-form");
     if (!form) return;
@@ -266,6 +272,10 @@ function initBookingFlow() {
 
       if (!buyerName || !buyerEmail || !buyerPhone) {
         alert("Please fill in your name, email and phone number.");
+        return;
+      }
+      if (!looksLikeAName(buyerName)) {
+        alert("Please enter a valid name.");
         return;
       }
 
@@ -283,6 +293,10 @@ function initBookingFlow() {
         bookingDetails.giftMessage = form.giftMessage.value.trim();
         if (!bookingDetails.recipientName) {
           alert("Please add the recipient's name.");
+          return;
+        }
+        if (!looksLikeAName(bookingDetails.recipientName)) {
+          alert("Please enter a valid name for the recipient.");
           return;
         }
       }
