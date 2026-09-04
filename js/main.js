@@ -150,7 +150,32 @@ document.addEventListener("DOMContentLoaded", () => {
   renderPackageCards();
   initBookingFlow();
   setActiveNav();
+  applyUploadedPhotos();
 });
+
+/* ---------- Uploaded photos (admin page) ---------- */
+// Every placeholder .frame with a data-slot swaps in a real photo here,
+// if one's been uploaded via /admin. Silently does nothing otherwise —
+// the CSS placeholder gradient just stays as-is.
+async function applyUploadedPhotos() {
+  const slots = document.querySelectorAll("[data-slot]");
+  if (!slots.length) return;
+  try {
+    const res = await fetch("/api/images", { cache: "no-store" });
+    if (!res.ok) return;
+    const manifest = await res.json();
+    slots.forEach((el) => {
+      const url = manifest[el.dataset.slot];
+      if (!url) return;
+      el.style.backgroundImage = `url("${url}")`;
+      el.style.backgroundSize = "cover";
+      el.style.backgroundPosition = "center";
+      el.classList.add("has-photo");
+    });
+  } catch (err) {
+    // No photos loaded — placeholders stay. Not worth surfacing to visitors.
+  }
+}
 
 /* ---------- Nav ---------- */
 function initNav() {

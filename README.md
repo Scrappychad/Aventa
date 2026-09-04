@@ -1,10 +1,11 @@
 # Aventa by NanaGraphy: Website
 
 Mostly a static site (plain HTML + one shared CSS file + one shared JS
-file) plus one small serverless function for sending emails. You can open
-`index.html` directly in a browser to preview the pages right now — only
-the booking-notification email needs the site actually deployed on Vercel
-to work, since that part runs server-side.
+file) plus a small set of Vercel serverless functions: one for booking
+emails, and a few for the admin photo-upload page. You can open
+`index.html` directly in a browser to preview the pages right now — the
+booking emails and admin uploads need the site actually deployed on
+Vercel, since those run server-side.
 
 ## Before this goes live, do these things
 
@@ -44,20 +45,32 @@ If the function isn't configured yet, or a request fails for any reason,
 the site falls back to opening a pre-filled email in the customer's own
 email app, so nothing gets silently lost while you're setting this up.
 
-## Add real photos
-Every image on the site is a placeholder `<div class="frame">` (tinted
-gradient blocks) so the layout works without real photos yet. To swap one in,
-replace:
-```html
-<div class="frame r-3-4" data-caption="Lifestyle"></div>
-```
-with:
-```html
-<img class="frame r-3-4" src="images/your-photo.jpg" alt="Lifestyle session">
-```
-Keep the class (`r-3-4`, `r-4-5`, `r-1-1`, or `r-16-9`) so the crop ratio
-stays consistent. Put your photo files in an `images/` folder next to
-`index.html`.
+### 3. Set up the admin photo page
+Every image on the site is a placeholder tinted block until a real photo
+is uploaded through `/admin` — a password-protected page for uploading or
+replacing any photo on the site, live, with no code changes or redeploys.
+
+**One-time setup:**
+1. In your Vercel project: **Storage → Create Database → Blob**. This
+   creates the storage bucket that holds uploaded photos and automatically
+   adds a `BLOB_READ_WRITE_TOKEN` environment variable — you don't need to
+   copy anything yourself.
+2. In **Settings → Environment Variables**, add one more:
+   - `ADMIN_PASSWORD` — whatever password you want to gate `/admin` with.
+     Keep it different from anything else you use.
+3. Redeploy.
+
+**Using it:** go to `yourdomain.com/admin`, enter the password, and you'll
+see every photo slot on the site (Home, About, Gallery) with an upload
+button. JPEG/PNG/WebP, up to 10MB per photo — worth compressing phone
+photos down a bit anyway, for page-load speed. Uploading replaces that
+slot's placeholder immediately across the live site; no waiting, no
+redeploy.
+
+The `/admin` page isn't linked from anywhere on the public site, and it's
+excluded from search engines — but the real protection is the password
+check itself, not the page being hard to find. Don't share the password
+outside the two of you.
 
 ## Update real contact details
 `contact.html`, and the footer on every page, currently link to placeholder
@@ -68,36 +81,28 @@ and replace with the real ones.
 ## Deploy to Vercel (same flow as your other projects)
 1. Push this folder to a new GitHub repo.
 2. In Vercel: **New Project → Import** that repo.
-3. Framework preset: **Other** — Vercel auto-detects the `api/` folder and
-   deploys `notify-booking.js` as a serverless function; no build command
-   needed for the rest of the site.
-4. Add the three Resend environment variables (see above) before or right
-   after your first deploy.
+3. Framework preset: **Other**. Vercel will run `npm install` (needed for
+   the admin page's Blob dependency) and auto-detect the `api/` folder as
+   serverless functions — no build command needed beyond that.
+4. Add the Resend and `ADMIN_PASSWORD` environment variables (see above)
+   before or right after your first deploy, and create the Blob store.
 5. Deploy. Vercel will serve `index.html` at your domain automatically.
 
+**One thing worth double-checking separately:** Vercel's free Hobby plan
+terms restrict it to non-commercial projects. Aventa processes real
+payments, so confirm you're on a Pro plan (or otherwise cleared for
+commercial use) before this goes fully live — unrelated to anything above,
+just worth knowing.
+
 ## What's intentionally NOT built yet (and why)
 - **No live booking calendar.** The date field is a simple date picker;
-  Nana confirms availability manually. A real-time calendar needs a backend
-  It's not worth building until booking volume actually needs it.
-- **No automated redemption ledger for gift passes.** Each gift generates a
-  pass reference code (e.g. `AVT-4F2C-1KX9`) shown on the confirmation
+  Nana confirms availability manually. A real-time calendar needs a
+  backend — not worth building until booking volume actually needs it.
+- **No automated redemption ledger for gift passes.** Each gift generates
+  a pass reference code (e.g. `AVT-4F2C-1KX9`) shown on the confirmation
   screen and emailed to Nana. Tracking which passes have been redeemed is
   manual for now (a spreadsheet). Automate this once Aventa has enough
   gift volume to justify a database.
 
-Both of the above are one-day builds later, once the numbers justify them,
-flag it back to me when you're there.
-
-
-## What's intentionally NOT built yet (and why)
-- **No live booking calendar.** The date field is a simple date picker;
-  Nana confirms availability manually. A real-time calendar needs a backend
-  It's not worth building until booking volume actually needs it.
-- **No automated redemption ledger for gift passes.** Each gift generates a
-  pass reference code (e.g. `AVT-4F2C-1KX9`) shown on the confirmation
-  screen and emailed to Nana. Tracking which passes have been redeemed is
-  manual for now (a spreadsheet). Automate this once Aventa has enough
-  gift volume to justify a database.
-
-Both of the above are one-day builds later, once the numbers justify them,
+Both of the above are one-day builds later, once the numbers justify them —
 flag it back to me when you're there.

@@ -234,6 +234,7 @@ section{ padding:88px 0; }
   font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
   color:rgba(245,239,227,0.7); text-transform:uppercase;
 }
+.frame.has-photo::after{ display:none; } /* real photo loaded — hide the placeholder label */
 .frame.r-4-5{ aspect-ratio:4/5; }
 .frame.r-1-1{ aspect-ratio:1/1; }
 .frame.r-16-9{ aspect-ratio:16/9; }
@@ -309,6 +310,34 @@ section{ padding:88px 0; }
 }
 .field-error.show{ display:block; }
 .field.has-error input, .field.has-error select{ border-color:var(--error); }
+
+/* ============ ADMIN PAGE ============ */
+.admin-group{ margin-bottom:44px; }
+.admin-group h3{ margin-bottom:18px; }
+.admin-slot-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+@media (max-width:860px){ .admin-slot-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .admin-slot-grid{ grid-template-columns:1fr; } }
+.admin-slot{
+  border:1px solid var(--line); border-radius:4px; padding:16px;
+  background:var(--paper); display:flex; flex-direction:column; gap:10px;
+}
+.admin-thumb{
+  aspect-ratio:4/5; border-radius:3px; overflow:hidden;
+  background:
+    repeating-linear-gradient(135deg, rgba(184,137,43,0.14) 0 2px, transparent 2px 16px),
+    linear-gradient(150deg,#2A2630,#5C2A3A 55%,#17151B);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:11px; color:rgba(245,239,227,0.6); text-transform:uppercase; letter-spacing:.06em;
+  text-align:center; padding:10px;
+}
+.admin-thumb img{ width:100%; height:100%; object-fit:cover; }
+.admin-slot-label{ font-family:var(--mono); font-size:12px; color:var(--stone-dark); text-transform:uppercase; letter-spacing:.04em; }
+.admin-slot input[type="file"]{ font-size:12px; }
+.admin-slot-actions{ display:flex; gap:8px; }
+.admin-slot-actions .btn{ flex:1; padding:9px 12px; font-size:11.5px; }
+.admin-slot-status{ font-size:12px; min-height:16px; }
+.admin-slot-status.ok{ color:#3E7A4E; }
+.admin-slot-status.err{ color:var(--error); }
 .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 @media (max-width:560px){ .grid-2{ grid-template-columns:1fr; } }
 

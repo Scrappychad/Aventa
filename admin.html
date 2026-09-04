@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Aventa Photos</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="on-paper">
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="/" class="brand">Aventa <span class="sub">Admin</span></a>
+  </div>
+</header>
+
+<main>
+  <section style="padding-top:48px;">
+    <div class="wrap" style="max-width:720px;">
+      <span class="eyebrow">Admin</span>
+      <h1 style="margin-top:14px; font-size:2rem;">Site Photos</h1>
+      <p class="lede" style="margin-top:10px;">Upload or replace any photo on the site. Changes go live immediately — no code, no redeploy.</p>
+
+      <div id="password-gate" class="ticket form-panel" style="margin-top:32px; max-width:420px;">
+        <h3 style="margin-bottom:14px;">Enter password</h3>
+        <div class="field">
+          <input type="password" id="admin-password-input" autocomplete="current-password">
+          <div class="field-error show" id="password-error" style="display:none;"></div>
+        </div>
+        <button type="button" class="btn on-ink block" id="unlock-btn">Unlock</button>
+      </div>
+
+      <div id="admin-panel" style="display:none; margin-top:32px;"></div>
+    </div>
+  </section>
+</main>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
