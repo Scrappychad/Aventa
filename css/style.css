@@ -361,6 +361,20 @@ section{ padding:88px 0; }
 .pkg-radio .r-name{ font-family:var(--display); font-size:1.05rem; }
 .pkg-radio .r-price{ font-family:var(--mono); font-size:14px; color:var(--gold); white-space:nowrap; }
 
+/* ============ MERCH TEASER BANNER ============ */
+.merch-teaser{
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  background:var(--gold); color:var(--ink); border-radius:4px;
+  padding:16px 22px;
+}
+.merch-teaser .tag{
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  background:var(--ink); color:var(--gold-bright); padding:6px 12px; border-radius:999px; flex:none;
+}
+.merch-teaser .text{ font-size:14.5px; font-weight:500; line-height:1.4; }
+.merch-teaser .text strong{ font-family:var(--display); font-weight:600; font-size:1.02em; }
+@media (max-width:560px){ .merch-teaser{ padding:14px 18px; } }
+
 .summary-row{ display:flex; justify-content:space-between; padding:12px 0; border-top:1px solid var(--line); font-size:14.5px; }
 .summary-row.total{ font-family:var(--mono); font-weight:500; color:var(--ink); font-size:16px; border-top:1px solid var(--ink); }
 .summary-row span:first-child{ color:var(--stone-dark); }
