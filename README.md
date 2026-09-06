@@ -49,16 +49,34 @@ email app, so nothing gets silently lost while you're setting this up.
 Every image on the site is a placeholder tinted block until a real photo
 is uploaded through `/admin` — a password-protected page for uploading or
 replacing any photo on the site, live, with no code changes or redeploys.
+Photos are stored in Vercel Blob.
 
-**One-time setup:**
-1. In your Vercel project: **Storage → Create Database → Blob**. This
-   creates the storage bucket that holds uploaded photos and automatically
-   adds a `BLOB_READ_WRITE_TOKEN` environment variable — you don't need to
-   copy anything yourself.
-2. In **Settings → Environment Variables**, add one more:
-   - `ADMIN_PASSWORD` — whatever password you want to gate `/admin` with.
-     Keep it different from anything else you use.
-3. Redeploy.
+**One-time setup — follow this exact order, it matters:**
+1. Open your **Aventa project in Vercel** (not your account's general
+   Storage page — it has to be from inside this specific project, or the
+   next step won't actually connect to it).
+2. Click the **Storage** tab at the top of the project.
+3. Click **Create Database → Blob**. Give it any name. Creating it from
+   here is what automatically connects it to this project and adds the
+   `BLOB_READ_WRITE_TOKEN` environment variable for you — you never copy
+   or paste that token yourself.
+4. Go to **Settings → Environment Variables** and confirm
+   `BLOB_READ_WRITE_TOKEN` is actually listed there, with **Production**
+   checked as one of its environments. If it's not there, the store
+   wasn't connected — go back to step 2 and create it from inside this
+   project specifically.
+5. While you're on that page, add one more variable:
+   - `ADMIN_PASSWORD` — whatever password you want to gate `/admin` with
+6. Go to **Deployments**, open the three-dot menu on the latest
+   deployment, and click **Redeploy**. This step is easy to skip —
+   adding an environment variable does nothing to a deployment that
+   already happened; it only applies going forward.
+
+**Built-in self-check:** the admin page automatically tests this setup
+the moment you log in. If `BLOB_READ_WRITE_TOKEN` still isn't wired up
+correctly, you'll see a clear red warning right at the top of the page
+saying so — instead of only finding out when a photo upload silently
+fails.
 
 **Using it:** go to `yourdomain.com/admin`, enter the password, and you'll
 see every photo slot on the site (Home, About, Gallery) with an upload

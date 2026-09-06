@@ -80,10 +80,34 @@ async function tryUnlock(password) {
     sessionStorage.setItem("aventa-admin-password", password);
     document.getElementById("password-gate").style.display = "none";
     document.getElementById("admin-panel").style.display = "block";
+    await checkServerSetup();
     await loadManifestAndRender();
   } catch (err) {
     errorEl.textContent = "Couldn't reach the server. Check your connection.";
     errorEl.style.display = "block";
+  }
+}
+
+async function checkServerSetup() {
+  const panel = document.getElementById("admin-panel");
+  try {
+    const res = await fetch("/api/admin-env-check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPassword })
+    });
+    const data = await res.json();
+    if (res.ok && !data.blobTokenPresent) {
+      const warning = document.createElement("div");
+      warning.className = "ticket form-panel";
+      warning.style.cssText = "margin-bottom:24px; border-color:var(--error);";
+      warning.innerHTML = `
+        <h3 style="color:var(--error); margin-bottom:8px;">⚠ Photo storage isn't connected</h3>
+        <p style="margin:0;">BLOB_READ_WRITE_TOKEN isn't set on the server. Uploads will fail until this is fixed — see the "Set up the admin photo page" section in the README. Most common cause: the Blob store was created from outside this specific project, or a deploy happened before it was connected.</p>`;
+      panel.prepend(warning);
+    }
+  } catch (err) {
+    // Don't block the page over a diagnostic check failing.
   }
 }
 
