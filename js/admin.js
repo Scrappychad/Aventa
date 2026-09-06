@@ -109,7 +109,11 @@ async function tryUnlock(password) {
       body: JSON.stringify({ password })
     });
     if (!res.ok) {
-      errorEl.textContent = "Wrong password.";
+      if (res.status === 401) {
+        errorEl.textContent = "Wrong password.";
+      } else {
+        errorEl.textContent = `Server error (status ${res.status}) — this isn't a wrong password, something else is failing. Check Vercel's function logs for admin-check.`;
+      }
       errorEl.style.display = "block";
       sessionStorage.removeItem("aventa-admin-password");
       return;
