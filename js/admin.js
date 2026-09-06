@@ -1,10 +1,11 @@
 // Admin page for uploading/replacing site photos.
 //
-// Uses Vercel Blob's browser-direct upload: the file goes straight from
-// this page to Blob storage, never through our own server function (which
-// has a hard 4.5MB request limit — too small for real phone photos).
-// /api/admin-upload-token authorizes each upload and checks the password.
-import { upload } from "https://esm.sh/@vercel/blob@2.8.0/client";
+// Photos are compressed in the browser (resized + re-encoded as JPEG)
+// before being sent to our own server, which then stores them in Vercel
+// Blob. We don't use Vercel Blob's documented browser-direct-upload
+// pattern here — it currently hits a confirmed, unresolved CORS bug on
+// Vercel's platform. Compressing client-side first means this simpler
+// approach never gets close to Vercel Functions' 4.5MB request limit.
 
 // Every image slot on the live site, grouped the way the pages are.
 const SLOT_GROUPS = [
@@ -41,7 +42,44 @@ const SLOT_GROUPS = [
   }
 ];
 
-const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB, matches the server-side cap
+const MAX_FILE_BYTES = 20 * 1024 * 1024; // generous — real cap is enforced after compression, below
+const MAX_DIMENSION = 2000; // px, longer side — plenty for web display, keeps files small
+const JPEG_QUALITY = 0.82;
+
+// Resizes and re-encodes a photo in the browser before it's ever sent
+// anywhere. A modern phone photo can be 8-15MB; this reliably brings it
+// down to a few hundred KB to a couple MB, which is what makes routing
+// the upload through our own server (see comment above) practical.
+async function compressImage(file) {
+  const bitmap = await createImageBitmap(file);
+  let { width, height } = bitmap;
+  if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+    const scale = MAX_DIMENSION / Math.max(width, height);
+    width = Math.round(width * scale);
+    height = Math.round(height * scale);
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, width, height);
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error("Compression failed."))),
+      "image/jpeg",
+      JPEG_QUALITY
+    );
+  });
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(String(reader.result).split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
 let adminPassword = "";
 let manifest = {};
 
@@ -179,20 +217,32 @@ function wireSlotCard(slotId) {
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
-      setStatus("That file's too big — keep it under 10MB.", "err");
+      setStatus("That file's too big — keep it under 20MB.", "err");
       return;
     }
 
-    setStatus("Uploading…");
     uploadBtn.disabled = true;
     try {
-      const result = await upload(`images/${slotId}`, file, {
-        access: "public",
-        handleUploadUrl: "/api/admin-upload-token",
-        clientPayload: JSON.stringify({ password: adminPassword, slot: slotId })
+      setStatus("Preparing photo…");
+      const compressed = await compressImage(file);
+      const dataBase64 = await blobToBase64(compressed);
+
+      setStatus("Uploading…");
+      const res = await fetch("/api/admin-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: adminPassword,
+          slot: slotId,
+          contentType: "image/jpeg",
+          dataBase64
+        })
       });
-      manifest[slotId] = result.url;
-      thumbEl.innerHTML = `<img src="${result.url}" alt="">`;
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed.");
+
+      manifest[slotId] = data.url;
+      thumbEl.innerHTML = `<img src="${data.url}" alt="">`;
       removeBtn.disabled = false;
       fileInput.value = "";
       setStatus("Uploaded — live on the site now.", "ok");

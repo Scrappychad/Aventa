@@ -80,10 +80,11 @@ fails.
 
 **Using it:** go to `yourdomain.com/admin`, enter the password, and you'll
 see every photo slot on the site (Home, About, Gallery) with an upload
-button. JPEG/PNG/WebP, up to 10MB per photo — worth compressing phone
-photos down a bit anyway, for page-load speed. Uploading replaces that
-slot's placeholder immediately across the live site; no waiting, no
-redeploy.
+button. Pick any JPEG/PNG/WebP straight from a phone camera — the page
+automatically resizes and compresses it in the browser before uploading,
+so there's no need to think about file size or format first. Uploading
+replaces that slot's placeholder immediately across the live site; no
+waiting, no redeploy.
 
 The `/admin` page isn't linked from anywhere on the public site, and it's
 excluded from search engines — but the real protection is the password
