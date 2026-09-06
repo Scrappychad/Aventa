@@ -183,9 +183,14 @@ function renderSlotCard(slot) {
       </div>
       <div class="admin-slot-label">${slot.label}</div>
       <input type="file" accept="image/jpeg,image/png,image/webp" data-file-input>
-      <div class="admin-slot-actions">
+      <div class="admin-slot-actions" data-actions-row>
         <button type="button" class="btn ghost" data-upload-btn>Upload</button>
         <button type="button" class="btn ghost" data-remove-btn ${currentUrl ? "" : "disabled"}>Remove</button>
+      </div>
+      <div class="admin-slot-actions admin-remove-confirm" data-remove-confirm style="display:none;">
+        <span class="admin-remove-confirm-text">Remove this photo?</span>
+        <button type="button" class="btn ghost" data-cancel-remove>Cancel</button>
+        <button type="button" class="btn danger" data-confirm-remove>Yes, remove</button>
       </div>
       <div class="admin-slot-status" data-status></div>
     </div>`;
@@ -254,10 +259,25 @@ function wireSlotCard(slotId) {
     }
   });
 
-  removeBtn.addEventListener("click", async () => {
-    if (!confirm("Remove this photo? The site will show the placeholder until you upload a new one.")) return;
+  const actionsRow = card.querySelector("[data-actions-row]");
+  const confirmRow = card.querySelector("[data-remove-confirm]");
+  const cancelBtn = card.querySelector("[data-cancel-remove]");
+  const confirmRemoveBtn = card.querySelector("[data-confirm-remove]");
+
+  removeBtn.addEventListener("click", () => {
+    actionsRow.style.display = "none";
+    confirmRow.style.display = "flex";
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    confirmRow.style.display = "none";
+    actionsRow.style.display = "flex";
+  });
+
+  confirmRemoveBtn.addEventListener("click", async () => {
     setStatus("Removing…");
-    removeBtn.disabled = true;
+    confirmRemoveBtn.disabled = true;
+    cancelBtn.disabled = true;
     try {
       const res = await fetch("/api/admin-delete", {
         method: "POST",
@@ -267,10 +287,15 @@ function wireSlotCard(slotId) {
       if (!res.ok) throw new Error("Delete failed.");
       delete manifest[slotId];
       thumbEl.innerHTML = "No photo yet";
+      removeBtn.disabled = true;
       setStatus("Removed.", "ok");
     } catch (err) {
       setStatus("Couldn't remove it. Try again.", "err");
-      removeBtn.disabled = false;
+    } finally {
+      confirmRemoveBtn.disabled = false;
+      cancelBtn.disabled = false;
+      confirmRow.style.display = "none";
+      actionsRow.style.display = "flex";
     }
   });
 }
