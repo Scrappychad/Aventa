@@ -61,8 +61,6 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true, url: manifest[slot] });
   } catch (err) {
     console.error("admin-upload error:", err);
-    // Temporarily including the real error message below so we can see
-    // exactly what's failing — safe to tighten back up once this works.
-    res.status(500).json({ error: `Upload failed: ${err && err.message ? err.message : String(err)}` });
+    res.status(500).json({ error: "Upload failed. Try again." });
   }
 }
