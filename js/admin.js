@@ -7,7 +7,9 @@
 // Vercel's platform. Compressing client-side first means this simpler
 // approach never gets close to Vercel Functions' 4.5MB request limit.
 
-// Every image slot on the live site, grouped the way the pages are.
+// Fixed single-photo slots — Home and About only. Gallery is handled
+// separately below, since each category can hold any number of photos
+// rather than a fixed slot per photo.
 const SLOT_GROUPS = [
   {
     title: "Home page",
@@ -22,24 +24,18 @@ const SLOT_GROUPS = [
   {
     title: "About page",
     slots: [{ id: "about-portrait", label: "Nana's portrait" }]
-  },
-  {
-    title: "Gallery page",
-    slots: [
-      { id: "gallery-lifestyle-1", label: "Lifestyle 1" },
-      { id: "gallery-birthday-1", label: "Birthday 1" },
-      { id: "gallery-couples-1", label: "Couples 1" },
-      { id: "gallery-graduation-1", label: "Graduation 1" },
-      { id: "gallery-lifestyle-2", label: "Lifestyle 2" },
-      { id: "gallery-brand-1", label: "Brand 1" },
-      { id: "gallery-reels-1", label: "Reel still 1" },
-      { id: "gallery-birthday-2", label: "Birthday 2" },
-      { id: "gallery-couples-2", label: "Couples 2" },
-      { id: "gallery-graduation-2", label: "Graduation 2" },
-      { id: "gallery-brand-2", label: "Brand 2" },
-      { id: "gallery-reels-2", label: "Reel still 2" }
-    ]
   }
+];
+
+// Gallery categories — each holds a growable list of photos, not a
+// fixed slot. Order here matches the filter chips on the Gallery page.
+const GALLERY_CATEGORIES = [
+  { id: "lifestyle", label: "Lifestyle" },
+  { id: "birthday", label: "Birthday" },
+  { id: "couples", label: "Couples" },
+  { id: "graduation", label: "Graduation" },
+  { id: "brand", label: "Brand" },
+  { id: "reels", label: "Reel stills" }
 ];
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024; // generous — real cap is enforced after compression, below
@@ -165,7 +161,8 @@ async function loadManifestAndRender() {
 
 function renderPanel() {
   const panel = document.getElementById("admin-panel");
-  panel.innerHTML = SLOT_GROUPS.map(
+
+  const slotGroupsHtml = SLOT_GROUPS.map(
     (group) => `
     <div class="admin-group">
       <h3>${group.title}</h3>
@@ -175,7 +172,145 @@ function renderPanel() {
     </div>`
   ).join("");
 
+  const galleryHtml = `
+    <div class="admin-group">
+      <h3>Gallery page</h3>
+      ${GALLERY_CATEGORIES.map((cat) => renderGalleryCategory(cat)).join("")}
+    </div>`;
+
+  panel.innerHTML = slotGroupsHtml + galleryHtml;
+
   SLOT_GROUPS.flatMap((g) => g.slots).forEach((slot) => wireSlotCard(slot.id));
+  GALLERY_CATEGORIES.forEach((cat) => wireGalleryCategory(cat.id));
+}
+
+function renderGalleryCategory(cat) {
+  const urls = (manifest.gallery && manifest.gallery[cat.id]) || [];
+  const itemsHtml = urls
+    .map(
+      (url) => `
+    <div class="admin-gallery-item" data-gallery-item data-url="${url}">
+      <div class="admin-thumb admin-thumb-sm"><img src="${url}" alt="${cat.label}"></div>
+      <div class="admin-gallery-item-actions" data-gallery-item-actions>
+        <button type="button" class="btn ghost" data-remove-photo>Remove</button>
+      </div>
+      <div class="admin-gallery-item-actions admin-remove-confirm" data-gallery-remove-confirm style="display:none;">
+        <button type="button" class="btn ghost" data-cancel-remove-photo>Cancel</button>
+        <button type="button" class="btn danger" data-confirm-remove-photo>Yes</button>
+      </div>
+    </div>`
+    )
+    .join("");
+
+  return `
+    <div class="admin-gallery-category" data-gallery-category="${cat.id}">
+      <div class="admin-gallery-category-head">
+        <h4>${cat.label}</h4>
+        <span class="admin-gallery-count">${urls.length} photo${urls.length === 1 ? "" : "s"}</span>
+      </div>
+      <div class="admin-gallery-items">
+        ${itemsHtml}
+        <div class="admin-gallery-item admin-gallery-add" data-gallery-add>
+          <input type="file" accept="image/jpeg,image/png,image/webp" data-gallery-file-input style="display:none;">
+          <button type="button" class="admin-gallery-add-btn" data-gallery-add-btn>+ Add photo</button>
+        </div>
+      </div>
+      <div class="admin-slot-status" data-gallery-status></div>
+    </div>`;
+}
+
+function wireGalleryCategory(categoryId) {
+  const catEl = document.querySelector(`[data-gallery-category="${categoryId}"]`);
+  if (!catEl) return;
+
+  const statusEl = catEl.querySelector("[data-gallery-status]");
+  const setStatus = (text, kind) => {
+    statusEl.textContent = text;
+    statusEl.className = "admin-slot-status" + (kind ? ` ${kind}` : "");
+  };
+
+  const addBtn = catEl.querySelector("[data-gallery-add-btn]");
+  const fileInput = catEl.querySelector("[data-gallery-file-input]");
+  addBtn.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setStatus("Use a JPEG, PNG, or WebP file.", "err");
+      fileInput.value = "";
+      return;
+    }
+    if (file.size > MAX_FILE_BYTES) {
+      setStatus("That file's too big — keep it under 20MB.", "err");
+      fileInput.value = "";
+      return;
+    }
+
+    addBtn.disabled = true;
+    try {
+      setStatus("Preparing photo…");
+      const compressed = await compressImage(file);
+      const dataBase64 = await blobToBase64(compressed);
+      setStatus("Uploading…");
+      const res = await fetch("/api/admin-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: adminPassword,
+          mode: "gallery",
+          category: categoryId,
+          contentType: "image/jpeg",
+          dataBase64
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed.");
+      manifest.gallery = data.gallery;
+      renderPanel();
+    } catch (err) {
+      console.error(err);
+      setStatus(err.message === "Wrong password." ? "Session expired — reload and re-enter the password." : "Upload failed. Try again.", "err");
+      addBtn.disabled = false;
+    }
+  });
+
+  catEl.querySelectorAll("[data-gallery-item]").forEach((item) => {
+    const url = item.dataset.url;
+    const actionsRow = item.querySelector("[data-gallery-item-actions]");
+    const confirmRow = item.querySelector("[data-gallery-remove-confirm]");
+    const removeBtn = item.querySelector("[data-remove-photo]");
+    const cancelBtn = item.querySelector("[data-cancel-remove-photo]");
+    const confirmBtn = item.querySelector("[data-confirm-remove-photo]");
+
+    removeBtn.addEventListener("click", () => {
+      actionsRow.style.display = "none";
+      confirmRow.style.display = "flex";
+    });
+    cancelBtn.addEventListener("click", () => {
+      confirmRow.style.display = "none";
+      actionsRow.style.display = "flex";
+    });
+    confirmBtn.addEventListener("click", async () => {
+      confirmBtn.disabled = true;
+      cancelBtn.disabled = true;
+      setStatus("Removing…");
+      try {
+        const res = await fetch("/api/admin-delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: adminPassword, mode: "gallery", category: categoryId, url })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Delete failed.");
+        manifest.gallery = data.gallery;
+        renderPanel();
+      } catch (err) {
+        setStatus("Couldn't remove it. Try again.", "err");
+        confirmBtn.disabled = false;
+        cancelBtn.disabled = false;
+      }
+    });
+  });
 }
 
 function renderSlotCard(slot) {

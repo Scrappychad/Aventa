@@ -32,12 +32,7 @@
     <div class="wrap">
       <span class="eyebrow">Gallery</span>
       <h1 style="margin-top:16px; max-width:18ch;">A look at Aventa in the wild.</h1>
-      <p class="lede" style="margin-top:14px;">
-        <strong style="color:var(--ink); font-weight:600;">Note for NanaGraphy:</strong>
-        the tinted panels below are placeholders. Swap each <code>.frame</code> div for an
-        <code>&lt;img&gt;</code> tag once real session photos are ready. Keep the <code>data-category</code>
-        attribute so filtering keeps working.
-      </p>
+      <p class="lede" style="margin-top:14px;">Real moments from real sessions.</p>
     </div>
   </section>
 
@@ -52,19 +47,8 @@
         <button class="filter-chip" data-filter="brand">Brand</button>
         <button class="filter-chip" data-filter="reels">Reels</button>
       </div>
-      <div class="grid cols-4">
-        <div class="frame r-3-4" data-category="lifestyle" data-caption="Lifestyle" data-slot="gallery-lifestyle-1"></div>
-        <div class="frame r-3-4" data-category="birthday" data-caption="Birthday" data-slot="gallery-birthday-1"></div>
-        <div class="frame r-1-1" data-category="couples" data-caption="Couples" data-slot="gallery-couples-1"></div>
-        <div class="frame r-3-4" data-category="graduation" data-caption="Graduation" data-slot="gallery-graduation-1"></div>
-        <div class="frame r-1-1" data-category="lifestyle" data-caption="Lifestyle" data-slot="gallery-lifestyle-2"></div>
-        <div class="frame r-3-4" data-category="brand" data-caption="Brand" data-slot="gallery-brand-1"></div>
-        <div class="frame r-16-9" data-category="reels" data-caption="Reel still" data-slot="gallery-reels-1"></div>
-        <div class="frame r-3-4" data-category="birthday" data-caption="Birthday" data-slot="gallery-birthday-2"></div>
-        <div class="frame r-3-4" data-category="couples" data-caption="Couples" data-slot="gallery-couples-2"></div>
-        <div class="frame r-1-1" data-category="graduation" data-caption="Graduation" data-slot="gallery-graduation-2"></div>
-        <div class="frame r-3-4" data-category="brand" data-caption="Brand" data-slot="gallery-brand-2"></div>
-        <div class="frame r-16-9" data-category="reels" data-caption="Reel still" data-slot="gallery-reels-2"></div>
+      <div class="grid cols-4" data-gallery-grid>
+        <p class="field-hint" data-gallery-empty style="display:none;">Photos are on the way — check back soon.</p>
       </div>
     </div>
   </section>

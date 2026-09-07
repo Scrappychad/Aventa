@@ -338,6 +338,27 @@ section{ padding:88px 0; }
 .admin-remove-confirm-text{ font-size:12px; color:var(--stone-dark); flex:1 1 100%; margin-bottom:2px; }
 .btn.danger{ background:var(--error); border-color:var(--error); color:var(--paper); }
 .btn.danger:hover{ background:#8A2F28; border-color:#8A2F28; }
+
+/* ============ ADMIN: GALLERY CATEGORIES ============ */
+.admin-gallery-category{ margin-bottom:30px; padding-bottom:26px; border-bottom:1px solid var(--line); }
+.admin-gallery-category:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.admin-gallery-category-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:14px; }
+.admin-gallery-category-head h4{ font-family:var(--display); font-size:1.1rem; margin:0; }
+.admin-gallery-count{ font-family:var(--mono); font-size:11px; color:var(--stone); text-transform:uppercase; letter-spacing:.04em; }
+.admin-gallery-items{ display:flex; flex-wrap:wrap; gap:14px; }
+.admin-gallery-item{ width:130px; display:flex; flex-direction:column; gap:8px; }
+.admin-thumb-sm{ aspect-ratio:1/1; }
+.admin-gallery-item-actions{ display:flex; gap:6px; flex-wrap:wrap; }
+.admin-gallery-item-actions .btn{ flex:1; padding:6px 8px; font-size:10.5px; }
+.admin-gallery-add{
+  aspect-ratio:1/1; border:1px dashed var(--line); border-radius:3px;
+  display:flex; align-items:center; justify-content:center; background:var(--paper-dim);
+}
+.admin-gallery-add-btn{
+  background:none; border:none; cursor:pointer; text-align:center;
+  font-family:var(--mono); font-size:11px; color:var(--stone-dark); line-height:1.4; padding:8px;
+}
+.admin-gallery-add-btn:hover{ color:var(--gold); }
 .admin-slot-status{ font-size:12px; min-height:16px; }
 .admin-slot-status.ok{ color:#3E7A4E; }
 .admin-slot-status.err{ color:var(--error); }

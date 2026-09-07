@@ -1,8 +1,10 @@
 // /api/admin-delete
 //
-// Removes a slot's photo — the site falls back to its placeholder for
-// that spot until a new photo is uploaded. Also deletes the underlying
-// Blob file so storage doesn't quietly accumulate orphaned images.
+// Two modes, matching admin-upload:
+//   "slot"    — clears a fixed single photo slot (Home, About).
+//   "gallery" — removes one specific photo from a category's list,
+//               identified by its exact URL (a category can hold
+//               several photos, so we need to know which one).
 
 import { del } from "@vercel/blob";
 import { getManifest, saveManifest, isValidAdminPassword } from "./_lib/manifest.js";
@@ -13,34 +15,47 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { password, slot } = req.body || {};
+  const { password, mode, slot, category, url } = req.body || {};
 
   if (!isValidAdminPassword(password)) {
     res.status(401).json({ error: "Wrong password." });
     return;
   }
-  if (!slot) {
-    res.status(400).json({ error: "Missing slot." });
-    return;
-  }
 
   try {
     const manifest = await getManifest();
-    const existingUrl = manifest[slot];
 
-    if (existingUrl) {
+    if (mode === "gallery") {
+      if (!category || !url) {
+        res.status(400).json({ error: "Missing category or url." });
+        return;
+      }
       try {
-        await del(existingUrl);
+        await del(url);
       } catch (err) {
-        // Not fatal — the manifest entry is what actually controls what
-        // the site displays, so still proceed to clear it either way.
         console.error("Blob delete failed (continuing):", err);
       }
+      manifest.gallery = manifest.gallery || {};
+      manifest.gallery[category] = (manifest.gallery[category] || []).filter((u) => u !== url);
+      await saveManifest(manifest);
+      res.status(200).json({ ok: true, gallery: manifest.gallery });
+    } else {
+      if (!slot) {
+        res.status(400).json({ error: "Missing slot." });
+        return;
+      }
+      const existingUrl = manifest[slot];
+      if (existingUrl) {
+        try {
+          await del(existingUrl);
+        } catch (err) {
+          console.error("Blob delete failed (continuing):", err);
+        }
+      }
+      delete manifest[slot];
+      await saveManifest(manifest);
+      res.status(200).json({ ok: true, manifest });
     }
-
-    delete manifest[slot];
-    await saveManifest(manifest);
-    res.status(200).json({ ok: true, manifest });
   } catch (err) {
     console.error("admin-delete error:", err);
     res.status(500).json({ error: "Could not remove that image. Try again." });

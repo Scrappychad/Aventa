@@ -159,22 +159,50 @@ document.addEventListener("DOMContentLoaded", () => {
 // the CSS placeholder gradient just stays as-is.
 async function applyUploadedPhotos() {
   const slots = document.querySelectorAll("[data-slot]");
-  if (!slots.length) return;
+  const galleryGrid = document.querySelector("[data-gallery-grid]");
+  if (!slots.length && !galleryGrid) return;
+
+  let manifest = {};
   try {
     const res = await fetch("/api/images", { cache: "no-store" });
     if (!res.ok) return;
-    const manifest = await res.json();
-    slots.forEach((el) => {
-      const url = manifest[el.dataset.slot];
-      if (!url) return;
-      el.style.backgroundImage = `url("${url}")`;
-      el.style.backgroundSize = "cover";
-      el.style.backgroundPosition = "center";
-      el.classList.add("has-photo");
-    });
+    manifest = await res.json();
   } catch (err) {
     // No photos loaded — placeholders stay. Not worth surfacing to visitors.
+    return;
   }
+
+  slots.forEach((el) => {
+    const url = manifest[el.dataset.slot];
+    if (!url) return;
+    el.style.backgroundImage = `url("${url}")`;
+    el.style.backgroundSize = "cover";
+    el.style.backgroundPosition = "center";
+    el.classList.add("has-photo");
+  });
+
+  if (galleryGrid) renderGalleryGrid(galleryGrid, manifest.gallery || {});
+}
+
+// Aspect ratios cycle through for a little visual variety across the
+// grid, matching the mix of portrait/square/widescreen frames the page
+// used to have hardcoded.
+const GALLERY_RATIOS = ["r-3-4", "r-1-1", "r-3-4", "r-16-9"];
+const GALLERY_CATEGORY_ORDER = ["lifestyle", "birthday", "couples", "graduation", "brand", "reels"];
+
+function renderGalleryGrid(grid, galleryData) {
+  let html = "";
+  let ratioIndex = 0;
+
+  GALLERY_CATEGORY_ORDER.forEach((cat) => {
+    (galleryData[cat] || []).forEach((url) => {
+      const ratio = GALLERY_RATIOS[ratioIndex % GALLERY_RATIOS.length];
+      ratioIndex++;
+      html += `<div class="frame ${ratio} has-photo" data-category="${cat}" style="background-image:url('${url}'); background-size:cover; background-position:center;"></div>`;
+    });
+  });
+
+  grid.innerHTML = html || '<p class="field-hint">Photos are on the way — check back soon.</p>';
 }
 
 /* ---------- Nav ---------- */
@@ -240,14 +268,15 @@ function initFaq() {
 /* ---------- Gallery filter ---------- */
 function initGalleryFilter() {
   const chips = document.querySelectorAll(".filter-chip");
-  const cards = document.querySelectorAll("[data-category]");
   if (!chips.length) return;
   chips.forEach((chip) => {
     chip.addEventListener("click", () => {
       chips.forEach((c) => c.classList.remove("active"));
       chip.classList.add("active");
       const cat = chip.dataset.filter;
-      cards.forEach((card) => {
+      // Queried fresh each click, not cached at page load — the gallery
+      // grid renders asynchronously after this function first runs.
+      document.querySelectorAll("[data-category]").forEach((card) => {
         card.style.display = cat === "all" || card.dataset.category === cat ? "" : "none";
       });
     });
