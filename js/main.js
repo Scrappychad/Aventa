@@ -11,7 +11,7 @@
    ========================================================= */
 
 // CONFIGURE: replace with your live Paystack public key
-const PAYSTACK_PUBLIC_KEY = "pk_test_45e128abb6c08ce3c7afba44f0a6c538b41c2a45";
+const PAYSTACK_PUBLIC_KEY = "pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY";
 
 // Vercel serverless function that emails Nana via Resend. No key lives
 // here — the Resend API key stays server-side inside that function.
@@ -152,6 +152,14 @@ document.addEventListener("DOMContentLoaded", () => {
   setActiveNav();
   applyUploadedPhotos();
   initLightbox();
+
+  const galleryGrid = document.querySelector("[data-gallery-grid]");
+  if (galleryGrid) {
+    window.addEventListener(
+      "resize",
+      debounce(() => layoutMasonry(galleryGrid), 150)
+    );
+  }
 });
 
 /* ---------- Uploaded photos (admin page) ---------- */
@@ -204,6 +212,48 @@ function renderGalleryGrid(grid, galleryData) {
   });
 
   grid.innerHTML = html || '<p class="field-hint">Photos are on the way — check back soon.</p>';
+  layoutMasonry(grid);
+}
+
+// Real "shortest column" masonry: each photo is placed wherever the
+// running total height is currently lowest, same approach Pinterest
+// uses. Re-run any time the visible set of photos changes (filtering)
+// or the viewport is resized, since column count and width both shift.
+const GALLERY_GAP = 22;
+
+function layoutMasonry(container) {
+  const frames = Array.from(container.querySelectorAll(".frame")).filter(
+    (f) => f.style.display !== "none"
+  );
+  if (!frames.length) {
+    container.style.height = "";
+    return;
+  }
+
+  const cols = parseInt(getComputedStyle(container).getPropertyValue("--gallery-cols"), 10) || 1;
+  const containerWidth = container.clientWidth;
+  const colWidth = (containerWidth - GALLERY_GAP * (cols - 1)) / cols;
+  const colHeights = new Array(cols).fill(0);
+
+  frames.forEach((frame) => {
+    let shortest = 0;
+    for (let i = 1; i < cols; i++) {
+      if (colHeights[i] < colHeights[shortest]) shortest = i;
+    }
+    frame.style.left = `${shortest * (colWidth + GALLERY_GAP)}px`;
+    frame.style.top = `${colHeights[shortest]}px`;
+    colHeights[shortest] += frame.offsetHeight + GALLERY_GAP;
+  });
+
+  container.style.height = `${Math.max(...colHeights) - GALLERY_GAP}px`;
+}
+
+function debounce(fn, wait) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), wait);
+  };
 }
 
 /* ---------- Lightbox (Gallery page) ---------- */
@@ -343,6 +393,8 @@ function initGalleryFilter() {
       document.querySelectorAll("[data-category]").forEach((card) => {
         card.style.display = cat === "all" || card.dataset.category === cat ? "" : "none";
       });
+      const grid = document.querySelector("[data-gallery-grid]");
+      if (grid) layoutMasonry(grid);
     });
   });
 }

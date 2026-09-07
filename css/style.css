@@ -245,24 +245,22 @@ section{ padding:88px 0; }
 .grid.cols-3{ grid-template-columns:repeat(3,1fr); }
 .grid.cols-4{ grid-template-columns:repeat(4,1fr); }
 
-/* Gallery specifically uses a masonry layout, not a strict grid — photos
-   of different heights stack tightly with no gaps, which a regular grid
-   can't do (a grid locks every row's height to its tallest item, leaving
-   dead space under shorter photos). This holds up no matter how many
-   photos exist or what order they're added in. */
+/* Gallery uses real "shortest column" masonry, computed in JS (see
+   layoutMasonry in main.js) — each photo goes wherever has the least
+   height so far, same as Pinterest. CSS alone can only fill column 1
+   completely before starting column 2, which isn't the same thing and
+   groups photos oddly when they're added by category. */
 .grid.cols-4[data-gallery-grid]{
   display:block;
-  column-count:4;
-  column-gap:22px;
+  position:relative;
+  --gallery-cols:4;
 }
 .grid.cols-4[data-gallery-grid] .frame{
-  break-inside:avoid;
-  margin-bottom:22px;
-  width:100%;
-  display:inline-block;
+  position:absolute;
+  width:calc((100% - (var(--gallery-cols) - 1) * 22px) / var(--gallery-cols));
 }
-@media (max-width:900px){ .grid.cols-4[data-gallery-grid]{ column-count:2; } }
-@media (max-width:560px){ .grid.cols-4[data-gallery-grid]{ column-count:1; } }
+@media (max-width:900px){ .grid.cols-4[data-gallery-grid]{ --gallery-cols:2; } }
+@media (max-width:560px){ .grid.cols-4[data-gallery-grid]{ --gallery-cols:1; } }
 .grid.cols-2{ grid-template-columns:repeat(2,1fr); }
 @media (max-width:900px){ .grid.cols-3,.grid.cols-4{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:560px){ .grid.cols-3,.grid.cols-4,.grid.cols-2{ grid-template-columns:1fr; } }
