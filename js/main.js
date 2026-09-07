@@ -11,7 +11,7 @@
    ========================================================= */
 
 // CONFIGURE: replace with your live Paystack public key
-const PAYSTACK_PUBLIC_KEY = "pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY";
+const PAYSTACK_PUBLIC_KEY = "pk_test_45e128abb6c08ce3c7afba44f0a6c538b41c2a45";
 
 // Vercel serverless function that emails Nana via Resend. No key lives
 // here — the Resend API key stays server-side inside that function.
@@ -197,7 +197,7 @@ async function applyUploadedPhotos() {
 // grid, matching the mix of portrait/square/widescreen frames the page
 // used to have hardcoded.
 const GALLERY_RATIOS = ["r-3-4", "r-1-1", "r-3-4", "r-16-9"];
-const GALLERY_CATEGORY_ORDER = ["lifestyle", "birthday", "couples", "graduation", "brand", "reels"];
+const GALLERY_CATEGORY_ORDER = ["birthday", "brand-shoot", "casual", "lifestyle", "streetwears", "miscellaneous"];
 
 function renderGalleryGrid(grid, galleryData) {
   let html = "";

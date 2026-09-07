@@ -17,8 +17,8 @@ const SLOT_GROUPS = [
       { id: "home-hero", label: "Hero pass photo" },
       { id: "home-preview-lifestyle", label: "Preview — Lifestyle" },
       { id: "home-preview-birthday", label: "Preview — Birthday" },
-      { id: "home-preview-couples", label: "Preview — Couples" },
-      { id: "home-preview-graduation", label: "Preview — Graduation" }
+      { id: "home-preview-brand-shoot", label: "Preview — Brand Shoot" },
+      { id: "home-preview-streetwears", label: "Preview — Streetwears" }
     ]
   },
   {
@@ -30,12 +30,12 @@ const SLOT_GROUPS = [
 // Gallery categories — each holds a growable list of photos, not a
 // fixed slot. Order here matches the filter chips on the Gallery page.
 const GALLERY_CATEGORIES = [
-  { id: "lifestyle", label: "Lifestyle" },
   { id: "birthday", label: "Birthday" },
-  { id: "couples", label: "Couples" },
-  { id: "graduation", label: "Graduation" },
-  { id: "brand", label: "Brand" },
-  { id: "reels", label: "Reel stills" }
+  { id: "brand-shoot", label: "Brand Shoot" },
+  { id: "casual", label: "Casual" },
+  { id: "lifestyle", label: "Lifestyle" },
+  { id: "streetwears", label: "Streetwears" },
+  { id: "miscellaneous", label: "Miscellaneous" }
 ];
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024; // generous — real cap is enforced after compression, below
