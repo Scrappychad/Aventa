@@ -151,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initBookingFlow();
   setActiveNav();
   applyUploadedPhotos();
+  initLightbox();
 });
 
 /* ---------- Uploaded photos (admin page) ---------- */
@@ -198,11 +199,74 @@ function renderGalleryGrid(grid, galleryData) {
     (galleryData[cat] || []).forEach((url) => {
       const ratio = GALLERY_RATIOS[ratioIndex % GALLERY_RATIOS.length];
       ratioIndex++;
-      html += `<div class="frame ${ratio} has-photo" data-category="${cat}" style="background-image:url('${url}'); background-size:cover; background-position:center;"></div>`;
+      html += `<div class="frame ${ratio} has-photo" data-category="${cat}" data-photo-url="${url}" style="background-image:url('${url}'); background-size:cover; background-position:center;"></div>`;
     });
   });
 
   grid.innerHTML = html || '<p class="field-hint">Photos are on the way — check back soon.</p>';
+}
+
+/* ---------- Lightbox (Gallery page) ---------- */
+function initLightbox() {
+  const lightbox = document.querySelector("[data-lightbox]");
+  if (!lightbox) return;
+
+  const imgEl = lightbox.querySelector("[data-lightbox-img]");
+  const closeBtn = lightbox.querySelector("[data-lightbox-close]");
+  const prevBtn = lightbox.querySelector("[data-lightbox-prev]");
+  const nextBtn = lightbox.querySelector("[data-lightbox-next]");
+  let currentIndex = -1;
+  let visibleFrames = [];
+
+  function getVisibleFrames() {
+    return Array.from(document.querySelectorAll(".frame[data-photo-url]")).filter(
+      (el) => el.style.display !== "none"
+    );
+  }
+
+  function openAt(index) {
+    visibleFrames = getVisibleFrames();
+    if (!visibleFrames.length) return;
+    currentIndex = (index + visibleFrames.length) % visibleFrames.length;
+    imgEl.src = visibleFrames[currentIndex].dataset.photoUrl;
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function close() {
+    lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function show(delta) {
+    if (!visibleFrames.length) return;
+    currentIndex = (currentIndex + delta + visibleFrames.length) % visibleFrames.length;
+    imgEl.src = visibleFrames[currentIndex].dataset.photoUrl;
+  }
+
+  document.addEventListener("click", (e) => {
+    const frame = e.target.closest(".frame[data-photo-url]");
+    if (!frame || frame.style.display === "none") return;
+    const frames = getVisibleFrames();
+    const index = frames.indexOf(frame);
+    if (index === -1) return;
+    openAt(index);
+  });
+
+  closeBtn.addEventListener("click", close);
+  prevBtn.addEventListener("click", () => show(-1));
+  nextBtn.addEventListener("click", () => show(1));
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) close(); // clicking the dark backdrop closes it
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!lightbox.classList.contains("open")) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowLeft") show(-1);
+    if (e.key === "ArrowRight") show(1);
+  });
 }
 
 /* ---------- Nav ---------- */
