@@ -10,7 +10,11 @@ export const MANIFEST_PATH = "data/images-manifest.json";
 export async function getManifest() {
   try {
     const info = await head(MANIFEST_PATH);
-    const response = await fetch(info.url, { cache: "no-store" });
+    // The manifest lives at one fixed URL that gets overwritten on every
+    // change — a cache-busting query param forces a fresh read every
+    // time, bypassing Vercel's CDN cache at the edge (cache:"no-store"
+    // alone only affects this function's own fetch, not the CDN).
+    const response = await fetch(`${info.url}?t=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) return {};
     return await response.json();
   } catch (err) {

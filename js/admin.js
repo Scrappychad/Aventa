@@ -151,7 +151,11 @@ async function checkServerSetup() {
 
 async function loadManifestAndRender() {
   try {
-    const res = await fetch("/api/images", { cache: "no-store" });
+    // Cache-busting query param — /api/images tells browsers/CDNs it's
+    // fine to cache its response for up to a minute (good for regular
+    // visitors, bad for admin work where you need to see the result of
+    // an upload or delete immediately, not up to a minute later).
+    const res = await fetch(`/api/images?t=${Date.now()}`, { cache: "no-store" });
     manifest = await res.json();
   } catch (err) {
     manifest = {};
