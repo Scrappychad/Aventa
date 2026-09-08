@@ -53,7 +53,7 @@
           <div class="dot done"></div><div class="dot done"></div><div class="dot"></div>
         </div>
 
-        <div class="toggle-pair" data-mode-toggle></div>
+        <div class="toggle-pair" data-mode-toggle data-mode-section></div>
 
         <div class="ticket form-panel" style="margin-bottom:24px;">
           <h3 style="margin-bottom:16px;">Choose your package</h3>
@@ -122,17 +122,27 @@
             </div>
           </div>
 
+          <div data-brand-inquiry-block style="display:none; margin-top:8px; padding-top:20px; border-top:1px dashed var(--line);">
+            <h3 style="margin-bottom:8px;">Tell us about your project</h3>
+            <p class="field-hint" style="margin-bottom:16px;">No fixed price on this one — describe what you need and Nana will follow up to discuss scope and settle on a quote together.</p>
+            <div class="field">
+              <label for="brandDetails">Project details</label>
+              <textarea id="brandDetails" name="brandDetails" placeholder="What's the project — a product shoot, campaign content, ongoing brand work? Rough timeline, deliverables, anything that helps."></textarea>
+              <div class="field-error" data-error-for="brandDetails"></div>
+            </div>
+          </div>
+
           <div class="field">
             <label for="notes">Anything else NanaGraphy should know? (optional)</label>
             <textarea id="notes" name="notes"></textarea>
           </div>
 
-          <div class="ticket" style="padding:20px 22px; margin:22px 0 26px; background:var(--paper-dim);">
+          <div class="ticket" data-normal-summary style="padding:20px 22px; margin:22px 0 26px; background:var(--paper-dim);">
             <div data-summary></div>
           </div>
 
           <button type="submit" class="btn on-ink block" data-pay-button>Pay</button>
-          <p class="field-hint" style="text-align:center; margin-top:14px;">Payment is processed securely by Paystack. NanaGraphy never sees your card details.</p>
+          <p class="field-hint" style="text-align:center; margin-top:14px;" data-payment-note>Payment is processed securely by Paystack. NanaGraphy never sees your card details.</p>
         </form>
       </div>
 

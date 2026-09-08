@@ -113,7 +113,7 @@ const AVENTA_PACKAGES = [
     name: "Premium",
     tag: "The complete Aventa",
     price: 60000,
-    priceLabel: "₦55,000 – ₦60,000",
+    priceLabel: "₦60,000",
     features: [
       "Lifestyle photoshoot",
       "7 professionally edited photos",
@@ -479,6 +479,12 @@ function initBookingFlow() {
     mount.querySelectorAll(".pkg-radio").forEach((el) => {
       el.addEventListener("click", () => {
         state.packageId = el.dataset.pkg;
+        if (state.packageId === "brand-content" && state.mode === "gift") {
+          state.mode = "self";
+          const giftFields = root.querySelector("[data-gift-fields]");
+          if (giftFields) giftFields.style.display = "none";
+        }
+        renderModeToggle();
         renderPackageSelect();
         renderSummary();
       });
@@ -492,6 +498,21 @@ function initBookingFlow() {
   function renderSummary() {
     const mount = root.querySelector("[data-summary]");
     const pkg = currentPackage();
+    const isBrandContent = pkg.id === "brand-content";
+    const summaryBlock = root.querySelector("[data-normal-summary]");
+    const inquiryBlock = root.querySelector("[data-brand-inquiry-block]");
+    const modeSection = root.querySelector("[data-mode-section]");
+    const paymentNote = root.querySelector("[data-payment-note]");
+
+    if (summaryBlock) summaryBlock.style.display = isBrandContent ? "none" : "block";
+    if (inquiryBlock) inquiryBlock.style.display = isBrandContent ? "block" : "none";
+    if (modeSection) modeSection.style.display = isBrandContent ? "none" : "flex";
+    if (paymentNote) {
+      paymentNote.textContent = isBrandContent
+        ? "No payment needed yet — Nana will reach out to discuss your project first."
+        : "Payment is processed securely by Paystack. NanaGraphy never sees your card details.";
+    }
+
     mount.innerHTML = `
       <div class="summary-row"><span>Package</span><span>${pkg.name}</span></div>
       <div class="summary-row"><span>For</span><span>${state.mode === "gift" ? "A gift recipient" : "Myself"}</span></div>
@@ -499,9 +520,7 @@ function initBookingFlow() {
     `;
     const payBtn = root.querySelector("[data-pay-button]");
     if (payBtn) {
-      payBtn.textContent = pkg.price >= 55000 && pkg.id === "premium"
-        ? `Pay from ₦${pkg.price.toLocaleString()}`
-        : `Pay ${pkg.priceLabel}`;
+      payBtn.textContent = isBrandContent ? "Send Inquiry" : `Pay ${pkg.priceLabel}`;
     }
   }
 
@@ -641,6 +660,14 @@ function initBookingFlow() {
         buyerName, buyerEmail, buyerPhone, preferredDate, notes
       };
 
+      if (pkg.id === "brand-content") {
+        bookingDetails.projectDetails = form.brandDetails ? form.brandDetails.value.trim() : "";
+        if (!bookingDetails.projectDetails) {
+          setFieldError(form, "brandDetails", "Add a few details about your project so Nana knows what you're after.");
+          hasError = true;
+        }
+      }
+
       if (state.mode === "gift") {
         bookingDetails.recipientName = form.recipientName.value.trim();
         bookingDetails.recipientPhone = getFullPhoneNumber("[data-recipient-phone-field]");
@@ -667,8 +694,45 @@ function initBookingFlow() {
         return;
       }
 
-      startPayment(pkg, bookingDetails, buyerEmail);
+      if (pkg.id === "brand-content") {
+        submitBrandInquiry(pkg, bookingDetails);
+      } else {
+        startPayment(pkg, bookingDetails, buyerEmail);
+      }
     });
+  }
+
+  // Brand Content has no fixed price — this sends the inquiry straight
+  // to Nana (reusing the same booking-notification pipeline) instead of
+  // opening Paystack, and shows a "she'll follow up" confirmation rather
+  // than a payment receipt.
+  async function submitBrandInquiry(pkg, details) {
+    const submitBtn = root.querySelector('[data-pay-button]');
+    if (submitBtn) submitBtn.disabled = true;
+    try {
+      await notifyNana({ ...details, inquiryType: "Brand Content quote request" });
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+    showInquiryConfirmation(pkg, details);
+  }
+
+  function showInquiryConfirmation(pkg, details) {
+    root.querySelector("[data-booking-form-wrap]").style.display = "none";
+    const conf = root.querySelector("[data-confirmation]");
+    conf.style.display = "block";
+    conf.innerHTML = `
+      <div class="ticket confirm-box on-paper">
+        <div class="mark">✓</div>
+        <span class="status-pill">Inquiry sent</span>
+        <h2>Nana has your details</h2>
+        <p>She'll reach out to ${details.buyerEmail} (or by phone) to talk through your project and settle on pricing — no payment needed yet.</p>
+        <div class="stub-divider" style="margin:26px 0 20px;"></div>
+        <div class="summary-row"><span>Package</span><span>${pkg.name}</span></div>
+        <div class="summary-row"><span>Your project</span><span style="text-align:right; max-width:60%;">${details.projectDetails}</span></div>
+        <a data-notify-fallback class="btn ghost" style="display:none;margin-top:24px;" target="_blank">Send details by email</a>
+      </div>`;
+    conf.scrollIntoView({ behavior: "smooth" });
   }
 
   function startPayment(pkg, details, email) {
