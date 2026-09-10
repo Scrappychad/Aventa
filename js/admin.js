@@ -6,6 +6,11 @@
 // pattern here — it currently hits a confirmed, unresolved CORS bug on
 // Vercel's platform. Compressing client-side first means this simpler
 // approach never gets close to Vercel Functions' 4.5MB request limit.
+//
+// iPhones save photos as HEIC by default, which no browser except Safari
+// can actually decode — heic2any converts it to a normal JPEG first, in
+// the browser, before it ever reaches the resize/compress step below.
+import heic2any from "https://esm.sh/heic2any@0.0.4";
 
 // Fixed single-photo slots — Home and About only. Gallery is handled
 // separately below, since each category can hold any number of photos
@@ -46,6 +51,22 @@ const JPEG_QUALITY = 0.82;
 // anywhere. A modern phone photo can be 8-15MB; this reliably brings it
 // down to a few hundred KB to a couple MB, which is what makes routing
 // the upload through our own server (see comment above) practical.
+// Detects a HEIC/HEIF photo (iPhone default format, some browsers report
+// no MIME type for it at all, so the file extension is checked too) and
+// converts it to a JPEG blob heic2any can produce. Anything else passes
+// through untouched.
+async function normalizeHeic(file) {
+  const isHeic =
+    file.type === "image/heic" ||
+    file.type === "image/heif" ||
+    /\.hei[cf]$/i.test(file.name || "");
+  if (!isHeic) return file;
+
+  const result = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.9 });
+  // A HEIC file can rarely contain a burst of several images — just use the first.
+  return Array.isArray(result) ? result[0] : result;
+}
+
 async function compressImage(file) {
   const bitmap = await createImageBitmap(file);
   let { width, height } = bitmap;
@@ -215,7 +236,7 @@ function renderGalleryCategory(cat) {
       <div class="admin-gallery-items">
         ${itemsHtml}
         <div class="admin-gallery-item admin-gallery-add" data-gallery-add>
-          <input type="file" accept="image/jpeg,image/png,image/webp" data-gallery-file-input style="display:none;">
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" data-gallery-file-input style="display:none;">
           <button type="button" class="admin-gallery-add-btn" data-gallery-add-btn>+ Add photo</button>
         </div>
       </div>
@@ -239,8 +260,9 @@ function wireGalleryCategory(categoryId) {
   fileInput.addEventListener("change", async () => {
     const file = fileInput.files[0];
     if (!file) return;
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setStatus("Use a JPEG, PNG, or WebP file.", "err");
+    const isHeic = file.type === "image/heic" || file.type === "image/heif" || /\.hei[cf]$/i.test(file.name || "");
+    if (!isHeic && !["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setStatus("Use a JPEG, PNG, WebP, or HEIC file.", "err");
       fileInput.value = "";
       return;
     }
@@ -252,8 +274,9 @@ function wireGalleryCategory(categoryId) {
 
     addBtn.disabled = true;
     try {
-      setStatus("Preparing photo…");
-      const compressed = await compressImage(file);
+      setStatus(isHeic ? "Converting HEIC photo…" : "Preparing photo…");
+      const normalized = await normalizeHeic(file);
+      const compressed = await compressImage(normalized);
       const dataBase64 = await blobToBase64(compressed);
       setStatus("Uploading…");
       const res = await fetch("/api/admin-upload", {
@@ -273,7 +296,10 @@ function wireGalleryCategory(categoryId) {
       renderPanel();
     } catch (err) {
       console.error(err);
-      setStatus(err.message === "Wrong password." ? "Session expired — reload and re-enter the password." : "Upload failed. Try again.", "err");
+      let message = "Upload failed. Try again.";
+      if (err.message === "Wrong password.") message = "Session expired — reload and re-enter the password.";
+      else if (isHeic) message = "Couldn't convert that HEIC photo. Try exporting it as JPEG first.";
+      setStatus(message, "err");
       addBtn.disabled = false;
     }
   });
@@ -325,7 +351,7 @@ function renderSlotCard(slot) {
         ${currentUrl ? `<img src="${currentUrl}" alt="${slot.label}">` : "No photo yet"}
       </div>
       <div class="admin-slot-label">${slot.label}</div>
-      <input type="file" accept="image/jpeg,image/png,image/webp" data-file-input>
+      <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" data-file-input>
       <div class="admin-slot-actions" data-actions-row>
         <button type="button" class="btn ghost" data-upload-btn>Upload</button>
         <button type="button" class="btn ghost" data-remove-btn ${currentUrl ? "" : "disabled"}>Remove</button>
@@ -360,8 +386,9 @@ function wireSlotCard(slotId) {
       setStatus("Choose a photo first.", "err");
       return;
     }
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setStatus("Use a JPEG, PNG, or WebP file.", "err");
+    const isHeic = file.type === "image/heic" || file.type === "image/heif" || /\.hei[cf]$/i.test(file.name || "");
+    if (!isHeic && !["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setStatus("Use a JPEG, PNG, WebP, or HEIC file.", "err");
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
@@ -371,8 +398,9 @@ function wireSlotCard(slotId) {
 
     uploadBtn.disabled = true;
     try {
-      setStatus("Preparing photo…");
-      const compressed = await compressImage(file);
+      setStatus(isHeic ? "Converting HEIC photo…" : "Preparing photo…");
+      const normalized = await normalizeHeic(file);
+      const compressed = await compressImage(normalized);
       const dataBase64 = await blobToBase64(compressed);
 
       setStatus("Uploading…");
@@ -396,7 +424,10 @@ function wireSlotCard(slotId) {
       setStatus("Uploaded — live on the site now.", "ok");
     } catch (err) {
       console.error(err);
-      setStatus(err.message === "Wrong password." ? "Session expired — reload and re-enter the password." : "Upload failed. Try again.", "err");
+      let message = "Upload failed. Try again.";
+      if (err.message === "Wrong password.") message = "Session expired — reload and re-enter the password.";
+      else if (isHeic) message = "Couldn't convert that HEIC photo. Try exporting it as JPEG first.";
+      setStatus(message, "err");
     } finally {
       uploadBtn.disabled = false;
     }
