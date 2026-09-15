@@ -11,7 +11,7 @@
    ========================================================= */
 
 // CONFIGURE: replace with your live Paystack public key
-const PAYSTACK_PUBLIC_KEY = "pk_test_45e128abb6c08ce3c7afba44f0a6c538b41c2a45";
+const PAYSTACK_PUBLIC_KEY = "pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY";
 
 // Vercel serverless function that emails Nana via Resend. No key lives
 // here — the Resend API key stays server-side inside that function.
@@ -784,7 +784,7 @@ function initBookingFlow() {
       );
       const link = document.querySelector("[data-notify-fallback]");
       if (link) {
-        link.href = `mailto:hello@nanagraphy.com?subject=${subject}&body=${body}`;
+        link.href = `mailto:nanaysha28@gmail.com?subject=${subject}&body=${body}`;
         link.style.display = "inline-flex";
       }
     };
