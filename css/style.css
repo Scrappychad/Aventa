@@ -503,5 +503,36 @@ section{ padding:88px 0; }
 .footer-col a:hover{ color:var(--paper); }
 .footer-bottom{ border-top:1px solid var(--line-on-ink); padding-top:24px; font-family:var(--mono); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; color:rgba(245,239,227,0.45); }
 
+/* ============ NANAGRAPHY LANDING PAGE ============
+   Deliberately NOT using the ticket/pass motif — that visual language
+   belongs to the Aventa Pass concept specifically. This page borrows
+   the same colors and type but reads as an editorial photography
+   portfolio: a full-bleed hero photo instead of a boxed graphic, and a
+   plain numbered list instead of cards for Services. */
+.ng-hero{ position:relative; min-height:82vh; display:flex; align-items:flex-end; overflow:hidden; }
+.ng-hero-media{
+  position:absolute; inset:0; background-size:cover; background-position:center;
+  background:linear-gradient(150deg,#2A2630,#5C2A3A 55%,#17151B);
+}
+.ng-hero-overlay{
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(23,21,27,0.05) 0%, rgba(23,21,27,0.92) 100%);
+}
+.ng-hero-content{ position:relative; z-index:2; padding:0 0 84px; max-width:640px; }
+.ng-hero-content .eyebrow{ color:var(--gold-bright); display:block; margin-bottom:18px; }
+.ng-hero-content h1{ color:var(--paper); margin-bottom:18px; }
+.ng-hero-content p{ color:rgba(245,239,227,0.82); }
+.ng-hero-content .btn.ghost{ border-color:var(--paper); color:var(--paper); }
+.ng-hero-content .btn.ghost:hover{ background:var(--paper); color:var(--ink); }
+@media (max-width:640px){ .ng-hero{ min-height:72vh; } .ng-hero-content{ padding-bottom:48px; } }
+
+.ng-service-list{ display:flex; flex-direction:column; }
+.ng-service{ display:flex; gap:28px; padding:32px 0; border-top:1px solid var(--line); align-items:flex-start; }
+.ng-service:last-child{ border-bottom:1px solid var(--line); }
+.ng-service-num{ font-family:var(--mono); font-size:13px; color:var(--gold); flex:none; padding-top:6px; width:32px; }
+.ng-service h3{ margin-bottom:8px; }
+.ng-service p{ margin:0; max-width:56ch; }
+@media (max-width:640px){ .ng-service{ gap:16px; padding:24px 0; } }
+
 .reveal{ opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease; }
 .reveal.in{ opacity:1; transform:none; }

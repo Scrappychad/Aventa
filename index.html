@@ -24,37 +24,16 @@
 </header>
 
 <main>
-  <section class="hero-band">
-    <div class="wrap hero">
-      <div class="hero-copy">
-        <span class="eyebrow">NanaGraphy</span>
-        <h1>Photography that feels like you.</h1>
-        <p class="lede">Lifestyle, brand, and event photography — plus the editing that makes every frame worth keeping. Based on real moments, not stiff poses.</p>
-        <div class="hero-actions">
-          <a href="#work" class="btn on-ink">See the work</a>
-          <a href="/aventa" class="btn ghost">Explore Aventa →</a>
-        </div>
-      </div>
-
-      <div class="ticket hero-pass">
-        <div class="row">
-          <div>
-            <div class="field-label">Studio</div>
-            <div class="field-value">NanaGraphy</div>
-          </div>
-          <div>
-            <div class="field-label">Based in</div>
-            <div class="field-value">Nigeria</div>
-          </div>
-        </div>
-        <div class="frame photo" data-caption="Sample work" data-slot="nanagraphy-hero"></div>
-        <div class="stub-divider"></div>
-        <div class="footer-row">
-          <div>
-            <div class="field-label">Services</div>
-            <div class="field-value">Photography &amp; Editing</div>
-          </div>
-        </div>
+  <section class="ng-hero">
+    <div class="ng-hero-media" data-slot="nanagraphy-hero"></div>
+    <div class="ng-hero-overlay"></div>
+    <div class="wrap ng-hero-content">
+      <span class="eyebrow">NanaGraphy</span>
+      <h1>Photography that feels like you.</h1>
+      <p class="lede">Lifestyle, brand, and event photography — plus the editing that makes every frame worth keeping. Based on real moments, not stiff poses.</p>
+      <div class="hero-actions">
+        <a href="#work" class="btn on-ink">See the work</a>
+        <a href="/aventa" class="btn ghost">Explore Aventa →</a>
       </div>
     </div>
   </section>
@@ -65,18 +44,27 @@
         <span class="eyebrow">What I do</span>
         <h2>Two things, done properly.</h2>
       </div>
-      <div class="grid cols-3">
-        <div class="ticket pkg-card reveal">
-          <div class="pkg-name">Photography</div>
-          <p style="margin:0;">Lifestyle sessions, brand shoots, and events — captured candidly, not staged into something unrecognizable.</p>
+      <div class="ng-service-list">
+        <div class="ng-service reveal">
+          <span class="ng-service-num">01</span>
+          <div>
+            <h3>Photography</h3>
+            <p>Lifestyle sessions, brand shoots, and events — captured candidly, not staged into something unrecognizable.</p>
+          </div>
         </div>
-        <div class="ticket pkg-card reveal">
-          <div class="pkg-name">Photo Editing</div>
-          <p style="margin:0;">Clean, natural retouching and color work that still looks like a photo, not a filter.</p>
+        <div class="ng-service reveal">
+          <span class="ng-service-num">02</span>
+          <div>
+            <h3>Photo Editing</h3>
+            <p>Clean, natural retouching and color work that still looks like a photo, not a filter.</p>
+          </div>
         </div>
-        <div class="ticket pkg-card reveal">
-          <div class="pkg-name">More on the way</div>
-          <p style="margin:0;">Full service list coming soon — reach out directly for anything not listed here yet.</p>
+        <div class="ng-service reveal">
+          <span class="ng-service-num">03</span>
+          <div>
+            <h3>More on the way</h3>
+            <p>Full service list coming soon — reach out directly for anything not listed here yet.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -88,11 +76,11 @@
         <span class="eyebrow">Sample work</span>
         <h2>A few favorites.</h2>
       </div>
-      <div class="grid cols-4">
+      <div class="grid cols-3">
         <div class="frame r-3-4 reveal" data-caption="Sample" data-slot="nanagraphy-sample-1"></div>
-        <div class="frame r-1-1 reveal" data-caption="Sample" data-slot="nanagraphy-sample-2"></div>
+        <div class="frame r-3-4 reveal" data-caption="Sample" data-slot="nanagraphy-sample-2"></div>
         <div class="frame r-3-4 reveal" data-caption="Sample" data-slot="nanagraphy-sample-3"></div>
-        <div class="frame r-1-1 reveal" data-caption="Sample" data-slot="nanagraphy-sample-4"></div>
+        <div class="frame r-3-4 reveal" data-caption="Sample" data-slot="nanagraphy-sample-4"></div>
       </div>
     </div>
   </section>
