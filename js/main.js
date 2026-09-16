@@ -418,7 +418,7 @@ function renderPackageCards() {
       <div class="stub-divider"></div>
       <ul>${p.features.map((f) => `<li>${f}</li>`).join("")}</ul>
       <div class="fine">${p.fine}</div>
-      <a class="btn ${p.featured ? "on-ink" : "ghost"} block" href="/book?package=${p.id}">Choose ${p.name}</a>
+      <a class="btn ${p.featured ? "on-ink" : "ghost"} block" href="/aventa/book?package=${p.id}">Choose ${p.name}</a>
     </div>`
   ).join("");
 }

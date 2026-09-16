@@ -17,7 +17,17 @@ import heic2any from "https://esm.sh/heic2any@0.0.4";
 // rather than a fixed slot per photo.
 const SLOT_GROUPS = [
   {
-    title: "Home page",
+    title: "NanaGraphy landing page",
+    slots: [
+      { id: "nanagraphy-hero", label: "Hero photo" },
+      { id: "nanagraphy-sample-1", label: "Sample work 1" },
+      { id: "nanagraphy-sample-2", label: "Sample work 2" },
+      { id: "nanagraphy-sample-3", label: "Sample work 3" },
+      { id: "nanagraphy-sample-4", label: "Sample work 4" }
+    ]
+  },
+  {
+    title: "Aventa: Home page",
     slots: [
       { id: "home-hero", label: "Hero pass photo" },
       { id: "home-preview-lifestyle", label: "Preview — Lifestyle" },
@@ -27,7 +37,7 @@ const SLOT_GROUPS = [
     ]
   },
   {
-    title: "About page",
+    title: "Aventa: About page",
     slots: [{ id: "about-portrait", label: "Nana's portrait" }]
   }
 ];
@@ -199,7 +209,7 @@ function renderPanel() {
 
   const galleryHtml = `
     <div class="admin-group">
-      <h3>Gallery page</h3>
+      <h3>Aventa: Gallery page</h3>
       ${GALLERY_CATEGORIES.map((cat) => renderGalleryCategory(cat)).join("")}
     </div>`;
 
