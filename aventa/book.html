@@ -103,10 +103,10 @@
             </div>
             <div class="grid-2">
               <div class="field">
-                <label for="recipientPhone">Recipient's phone (optional)</label>
+                <label for="recipientPhone">Recipient's phone</label>
                 <div class="phone-field" data-recipient-phone-field>
                   <select id="recipientPhoneCode" name="recipientPhoneCode" class="phone-code" data-phone-code></select>
-                  <input type="tel" id="recipientPhone" name="recipientPhone" inputmode="numeric" data-phone-number>
+                  <input type="tel" id="recipientPhone" name="recipientPhone" inputmode="numeric" data-phone-number required>
                 </div>
                 <div class="field-hint">Digits only, without the leading 0.</div>
                 <div class="field-error" data-error-for="recipientPhone"></div>
