@@ -2,13 +2,13 @@
 //
 // Vercel serverless function. Receives booking/gift details from the
 // site's booking form and emails Nana via Resend. This exists because
-// Resend's API key must stay server-side — it can never be used
+// Resend's API key must stay server-side - it can never be used
 // directly from browser JavaScript (see README for details).
 //
 // CONFIGURE (in Vercel → Project → Settings → Environment Variables):
 //   RESEND_API_KEY   your Resend API key (starts with re_)
 //   NOTIFY_TO_EMAIL  where booking notifications should be sent (Nana's inbox)
-//   NOTIFY_FROM_EMAIL  the "from" address Resend sends as — must be on a
+//   NOTIFY_FROM_EMAIL  the "from" address Resend sends as - must be on a
 //                       domain you've verified in Resend. Until a domain
 //                       is verified, use "onboarding@resend.dev" for testing.
 
@@ -33,8 +33,8 @@ export default async function handler(req, res) {
     .join("");
 
   const subject = payload.mode === "gift"
-    ? `New Aventa gift purchase — ${payload.package || ""}`
-    : `New Aventa booking — ${payload.package || ""}`;
+    ? `New Aventa gift purchase - ${payload.package || ""}`
+    : `New Aventa booking - ${payload.package || ""}`;
 
   const html = `
     <div style="font-family:sans-serif;max-width:520px;margin:0 auto;">

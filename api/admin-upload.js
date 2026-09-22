@@ -9,9 +9,9 @@
 // 4.5MB request body limit despite going the "simple" route.
 //
 // Two upload modes:
-//   "slot"    — a fixed single photo (Home, About). Always overwrites
+//   "slot"    - a fixed single photo (Home, About). Always overwrites
 //               the same path, so there's only ever one image per slot.
-//   "gallery" — appends a new photo to a category's list (Lifestyle,
+//   "gallery" - appends a new photo to a category's list (Lifestyle,
 //               Birthday, etc.). Each upload gets its own unique path,
 //               so a category can grow to any number of photos.
 
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     const manifest = await getManifest();
 
     if (mode === "gallery") {
-      // Each gallery photo gets its own unique path — addRandomSuffix
+      // Each gallery photo gets its own unique path - addRandomSuffix
       // handles that automatically, since a category can hold any
       // number of photos rather than replacing a single fixed one.
       const blob = await put(`images/gallery-${category}`, buffer, {
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
         allowOverwrite: true,
         contentType: contentType || "image/jpeg"
       });
-      // Cache-bust — the file gets overwritten in place at the same
+      // Cache-bust - the file gets overwritten in place at the same
       // path, and without this, browsers/CDNs can keep serving the old
       // cached photo after a replace.
       manifest[slot] = `${blob.url}?v=${Date.now()}`;

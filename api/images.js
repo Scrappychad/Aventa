@@ -2,7 +2,7 @@
 //
 // Public, read-only. Every page fetches this on load to find out which
 // "slots" (home-hero, gallery-lifestyle-1, etc.) have a real uploaded
-// photo, and swaps it in over the placeholder. No password needed here —
+// photo, and swaps it in over the placeholder. No password needed here -
 // these are the same images visitors already see on the live site.
 
 import { getManifest } from "./_lib/manifest.js";

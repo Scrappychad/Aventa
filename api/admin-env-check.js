@@ -1,7 +1,7 @@
 // /api/admin-env-check
 //
 // Called right after a successful password unlock. Catches a missing
-// BLOB_READ_WRITE_TOKEN immediately, with a clear message — instead of
+// BLOB_READ_WRITE_TOKEN immediately, with a clear message - instead of
 // the person only finding out when their first photo upload fails with
 // a generic error buried in the browser's Network tab.
 

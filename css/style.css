@@ -234,7 +234,7 @@ section{ padding:88px 0; }
   font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
   color:rgba(245,239,227,0.7); text-transform:uppercase;
 }
-.frame.has-photo::after{ display:none; } /* real photo loaded — hide the placeholder label */
+.frame.has-photo::after{ display:none; } /* real photo loaded - hide the placeholder label */
 .frame.r-4-5{ aspect-ratio:4/5; }
 .frame.r-1-1{ aspect-ratio:1/1; }
 .frame.r-16-9{ aspect-ratio:16/9; }
@@ -246,7 +246,7 @@ section{ padding:88px 0; }
 .grid.cols-4{ grid-template-columns:repeat(4,1fr); }
 
 /* Gallery uses real "shortest column" masonry, computed in JS (see
-   layoutMasonry in main.js) — each photo goes wherever has the least
+   layoutMasonry in main.js) - each photo goes wherever has the least
    height so far, same as Pinterest. CSS alone can only fill column 1
    completely before starting column 2, which isn't the same thing and
    groups photos oddly when they're added by category. */
@@ -498,13 +498,15 @@ section{ padding:88px 0; }
   .footer-cols{ gap:36px; width:100%; }
   .footer-col{ min-width:0; }
 }
+.footer-col{ margin-right:32px; } /* fallback for the flex gap above, in case a browser's gap support is spotty */
+.footer-col:last-child{ margin-right:0; }
 .footer-col h4{ font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:14px; font-weight:400; }
 .footer-col a{ display:block; font-size:14px; padding:6px 0; color:rgba(245,239,227,0.72); }
 .footer-col a:hover{ color:var(--paper); }
 .footer-bottom{ border-top:1px solid var(--line-on-ink); padding-top:24px; font-family:var(--mono); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; color:rgba(245,239,227,0.45); }
 
 /* ============ NANAGRAPHY LANDING PAGE ============
-   Deliberately NOT using the ticket/pass motif — that visual language
+   Deliberately NOT using the ticket/pass motif - that visual language
    belongs to the Aventa Pass concept specifically. This page borrows
    the same colors and type but reads as an editorial photography
    portfolio: a full-bleed hero photo instead of a boxed graphic, and a

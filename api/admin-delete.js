@@ -1,8 +1,8 @@
 // /api/admin-delete
 //
 // Two modes, matching admin-upload:
-//   "slot"    — clears a fixed single photo slot (Home, About).
-//   "gallery" — removes one specific photo from a category's list,
+//   "slot"    - clears a fixed single photo slot (Home, About).
+//   "gallery" - removes one specific photo from a category's list,
 //               identified by its exact URL (a category can hold
 //               several photos, so we need to know which one).
 

@@ -3,16 +3,16 @@
 // Photos are compressed in the browser (resized + re-encoded as JPEG)
 // before being sent to our own server, which then stores them in Vercel
 // Blob. We don't use Vercel Blob's documented browser-direct-upload
-// pattern here — it currently hits a confirmed, unresolved CORS bug on
+// pattern here - it currently hits a confirmed, unresolved CORS bug on
 // Vercel's platform. Compressing client-side first means this simpler
 // approach never gets close to Vercel Functions' 4.5MB request limit.
 //
 // iPhones save photos as HEIC by default, which no browser except Safari
-// can actually decode — heic2any converts it to a normal JPEG first, in
+// can actually decode - heic2any converts it to a normal JPEG first, in
 // the browser, before it ever reaches the resize/compress step below.
 import heic2any from "https://esm.sh/heic2any@0.0.4";
 
-// Fixed single-photo slots — Home and About only. Gallery is handled
+// Fixed single-photo slots - Home and About only. Gallery is handled
 // separately below, since each category can hold any number of photos
 // rather than a fixed slot per photo.
 const SLOT_GROUPS = [
@@ -32,10 +32,10 @@ const SLOT_GROUPS = [
     title: "Aventa: Home page",
     slots: [
       { id: "home-hero", label: "Hero pass photo" },
-      { id: "home-preview-lifestyle", label: "Preview — Lifestyle" },
-      { id: "home-preview-birthday", label: "Preview — Birthday" },
-      { id: "home-preview-brand-shoot", label: "Preview — Brand Shoot" },
-      { id: "home-preview-streetwears", label: "Preview — Streetwears" }
+      { id: "home-preview-lifestyle", label: "Preview - Lifestyle" },
+      { id: "home-preview-birthday", label: "Preview - Birthday" },
+      { id: "home-preview-brand-shoot", label: "Preview - Brand Shoot" },
+      { id: "home-preview-streetwears", label: "Preview - Streetwears" }
     ]
   },
   {
@@ -44,7 +44,7 @@ const SLOT_GROUPS = [
   }
 ];
 
-// Gallery categories — each holds a growable list of photos, not a
+// Gallery categories - each holds a growable list of photos, not a
 // fixed slot. Order here matches the filter chips on the Gallery page.
 const GALLERY_CATEGORIES = [
   { id: "birthday", label: "Birthday" },
@@ -55,8 +55,8 @@ const GALLERY_CATEGORIES = [
   { id: "miscellaneous", label: "Miscellaneous" }
 ];
 
-const MAX_FILE_BYTES = 20 * 1024 * 1024; // generous — real cap is enforced after compression, below
-const MAX_DIMENSION = 2000; // px, longer side — plenty for web display, keeps files small
+const MAX_FILE_BYTES = 20 * 1024 * 1024; // generous - real cap is enforced after compression, below
+const MAX_DIMENSION = 2000; // px, longer side - plenty for web display, keeps files small
 const JPEG_QUALITY = 0.82;
 
 // Resizes and re-encodes a photo in the browser before it's ever sent
@@ -75,7 +75,7 @@ async function normalizeHeic(file) {
   if (!isHeic) return file;
 
   const result = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.9 });
-  // A HEIC file can rarely contain a burst of several images — just use the first.
+  // A HEIC file can rarely contain a burst of several images - just use the first.
   return Array.isArray(result) ? result[0] : result;
 }
 
@@ -141,7 +141,7 @@ async function tryUnlock(password) {
       if (res.status === 401) {
         errorEl.textContent = "Wrong password.";
       } else {
-        errorEl.textContent = `Server error (status ${res.status}) — this isn't a wrong password, something else is failing. Check Vercel's function logs for admin-check.`;
+        errorEl.textContent = `Server error (status ${res.status}) - this isn't a wrong password, something else is failing. Check Vercel's function logs for admin-check.`;
       }
       errorEl.style.display = "block";
       sessionStorage.removeItem("aventa-admin-password");
@@ -174,7 +174,7 @@ async function checkServerSetup() {
       warning.style.cssText = "margin-bottom:24px; border-color:var(--error);";
       warning.innerHTML = `
         <h3 style="color:var(--error); margin-bottom:8px;">⚠ Photo storage isn't connected</h3>
-        <p style="margin:0;">BLOB_READ_WRITE_TOKEN isn't set on the server. Uploads will fail until this is fixed — see the "Set up the admin photo page" section in the README. Most common cause: the Blob store was created from outside this specific project, or a deploy happened before it was connected.</p>`;
+        <p style="margin:0;">BLOB_READ_WRITE_TOKEN isn't set on the server. Uploads will fail until this is fixed - see the "Set up the admin photo page" section in the README. Most common cause: the Blob store was created from outside this specific project, or a deploy happened before it was connected.</p>`;
       panel.prepend(warning);
     }
   } catch (err) {
@@ -184,7 +184,7 @@ async function checkServerSetup() {
 
 async function loadManifestAndRender() {
   try {
-    // Cache-busting query param — /api/images tells browsers/CDNs it's
+    // Cache-busting query param - /api/images tells browsers/CDNs it's
     // fine to cache its response for up to a minute (good for regular
     // visitors, bad for admin work where you need to see the result of
     // an upload or delete immediately, not up to a minute later).
@@ -279,7 +279,7 @@ function wireGalleryCategory(categoryId) {
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
-      setStatus("That file's too big — keep it under 20MB.", "err");
+      setStatus("That file's too big - keep it under 20MB.", "err");
       fileInput.value = "";
       return;
     }
@@ -309,7 +309,7 @@ function wireGalleryCategory(categoryId) {
     } catch (err) {
       console.error(err);
       let message = "Upload failed. Try again.";
-      if (err.message === "Wrong password.") message = "Session expired — reload and re-enter the password.";
+      if (err.message === "Wrong password.") message = "Session expired - reload and re-enter the password.";
       else if (isHeic) message = "Couldn't convert that HEIC photo. Try exporting it as JPEG first.";
       setStatus(message, "err");
       addBtn.disabled = false;
@@ -404,7 +404,7 @@ function wireSlotCard(slotId) {
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
-      setStatus("That file's too big — keep it under 20MB.", "err");
+      setStatus("That file's too big - keep it under 20MB.", "err");
       return;
     }
 
@@ -433,11 +433,11 @@ function wireSlotCard(slotId) {
       thumbEl.innerHTML = `<img src="${data.url}" alt="">`;
       removeBtn.disabled = false;
       fileInput.value = "";
-      setStatus("Uploaded — live on the site now.", "ok");
+      setStatus("Uploaded - live on the site now.", "ok");
     } catch (err) {
       console.error(err);
       let message = "Upload failed. Try again.";
-      if (err.message === "Wrong password.") message = "Session expired — reload and re-enter the password.";
+      if (err.message === "Wrong password.") message = "Session expired - reload and re-enter the password.";
       else if (isHeic) message = "Couldn't convert that HEIC photo. Try exporting it as JPEG first.";
       setStatus(message, "err");
     } finally {

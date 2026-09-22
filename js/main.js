@@ -5,16 +5,16 @@
      PAYSTACK_PUBLIC_KEY  - from your Paystack dashboard
 
    Booking notification emails go through Resend via a Vercel
-   serverless function at /api/notify-booking.js — that file
+   serverless function at /api/notify-booking.js - that file
    holds its own setup instructions and needs three environment
    variables set in Vercel before it will send anything.
    ========================================================= */
 
 // CONFIGURE: replace with your live Paystack public key
-const PAYSTACK_PUBLIC_KEY = "pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY";
+const PAYSTACK_PUBLIC_KEY = "pk_test_45e128abb6c08ce3c7afba44f0a6c538b41c2a45";
 
 // Vercel serverless function that emails Nana via Resend. No key lives
-// here — the Resend API key stays server-side inside that function.
+// here - the Resend API key stays server-side inside that function.
 const NOTIFY_ENDPOINT = "/api/notify-booking";
 
 // ITU-T country calling codes. Value stored is digits only, no "+".
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ---------- Uploaded photos (admin page) ---------- */
 // Every placeholder .frame with a data-slot swaps in a real photo here,
-// if one's been uploaded via /admin. Silently does nothing otherwise —
+// if one's been uploaded via /admin. Silently does nothing otherwise -
 // the CSS placeholder gradient just stays as-is.
 async function applyUploadedPhotos() {
   const slots = document.querySelectorAll("[data-slot]");
@@ -177,7 +177,7 @@ async function applyUploadedPhotos() {
     if (!res.ok) return;
     manifest = await res.json();
   } catch (err) {
-    // No photos loaded — placeholders stay. Not worth surfacing to visitors.
+    // No photos loaded - placeholders stay. Not worth surfacing to visitors.
     return;
   }
 
@@ -211,7 +211,7 @@ function renderGalleryGrid(grid, galleryData) {
     });
   });
 
-  grid.innerHTML = html || '<p class="field-hint">Photos are on the way — check back soon.</p>';
+  grid.innerHTML = html || '<p class="field-hint">Photos are on the way - check back soon.</p>';
   layoutMasonry(grid);
 }
 
@@ -343,7 +343,7 @@ function initReveal() {
 
   // Safety net: if IntersectionObserver isn't available, or if the
   // browser never fires it for any reason, don't leave content stuck
-  // invisible — this matters on slower mobile connections where a
+  // invisible - this matters on slower mobile connections where a
   // reveal-in animation is a nice-to-have, but hidden content is not.
   const forceVisible = () => items.forEach((i) => i.classList.add("in"));
 
@@ -388,7 +388,7 @@ function initGalleryFilter() {
       chips.forEach((c) => c.classList.remove("active"));
       chip.classList.add("active");
       const cat = chip.dataset.filter;
-      // Queried fresh each click, not cached at page load — the gallery
+      // Queried fresh each click, not cached at page load - the gallery
       // grid renders asynchronously after this function first runs.
       document.querySelectorAll("[data-category]").forEach((card) => {
         card.style.display = cat === "all" || card.dataset.category === cat ? "" : "none";
@@ -509,7 +509,7 @@ function initBookingFlow() {
     if (modeSection) modeSection.style.display = isBrandContent ? "none" : "flex";
     if (paymentNote) {
       paymentNote.textContent = isBrandContent
-        ? "No payment needed yet — Nana will reach out to discuss your project first."
+        ? "No payment needed yet - Nana will reach out to discuss your project first."
         : "Payment is processed securely by Paystack. NanaGraphy never sees your card details.";
     }
 
@@ -524,7 +524,7 @@ function initBookingFlow() {
     }
   }
 
-  // A real name needs at least one letter — blocks "12345", "!!!", etc.
+  // A real name needs at least one letter - blocks "12345", "!!!", etc.
   // Allows accented letters, hyphens, apostrophes, spaces (Mary-Jane, O'Neil).
   function looksLikeAName(value) {
     return /[a-zA-Z\u00C0-\u024F]/.test(value);
@@ -556,7 +556,7 @@ function initBookingFlow() {
       };
 
       numberInput.addEventListener("input", () => {
-        // Digits only — strips spaces, dashes, letters as the person types.
+        // Digits only - strips spaces, dashes, letters as the person types.
         numberInput.value = numberInput.value.replace(/\D/g, "");
         applyCap();
       });
@@ -576,7 +576,7 @@ function initBookingFlow() {
   }
 
   // Shows/clears an inline message under a given field instead of a
-  // browser alert() popup — name matches each input's data-error-for.
+  // browser alert() popup - name matches each input's data-error-for.
   function setFieldError(form, name, message) {
     const errorEl = form.querySelector(`[data-error-for="${name}"]`);
     const fieldEl = errorEl ? errorEl.closest(".field") : null;
@@ -649,7 +649,7 @@ function initBookingFlow() {
         setFieldError(form, "buyerPhone", "Please enter your phone number.");
         hasError = true;
       } else if (buyerPhone.replace(/\D/g, "").length > E164_MAX_DIGITS) {
-        setFieldError(form, "buyerPhone", "That's too long — international numbers max out at 15 digits, including the country code.");
+        setFieldError(form, "buyerPhone", "That's too long - international numbers max out at 15 digits, including the country code.");
         hasError = true;
       }
 
@@ -686,7 +686,7 @@ function initBookingFlow() {
           setFieldError(form, "recipientPhone", "Please add the recipient's phone number.");
           hasError = true;
         } else if (bookingDetails.recipientPhone.replace(/\D/g, "").length > E164_MAX_DIGITS) {
-          setFieldError(form, "recipientPhone", "That's too long — international numbers max out at 15 digits, including the country code.");
+          setFieldError(form, "recipientPhone", "That's too long - international numbers max out at 15 digits, including the country code.");
           hasError = true;
         }
       }
@@ -705,7 +705,7 @@ function initBookingFlow() {
     });
   }
 
-  // Brand Content has no fixed price — this sends the inquiry straight
+  // Brand Content has no fixed price - this sends the inquiry straight
   // to Nana (reusing the same booking-notification pipeline) instead of
   // opening Paystack, and shows a "she'll follow up" confirmation rather
   // than a payment receipt.
@@ -729,7 +729,7 @@ function initBookingFlow() {
         <div class="mark">✓</div>
         <span class="status-pill">Inquiry sent</span>
         <h2>Nana has your details</h2>
-        <p>She'll reach out to ${details.buyerEmail} (or by phone) to talk through your project and settle on pricing — no payment needed yet.</p>
+        <p>She'll reach out to ${details.buyerEmail} (or by phone) to talk through your project and settle on pricing - no payment needed yet.</p>
         <div class="stub-divider" style="margin:26px 0 20px;"></div>
         <div class="summary-row"><span>Package</span><span>${pkg.name}</span></div>
         <div class="summary-row"><span>Your project</span><span style="text-align:right; max-width:60%;">${details.projectDetails}</span></div>

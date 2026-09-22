@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Aventa by NanaGraphy — static site with a small set of Vercel serverless functions for booking notifications and admin image uploads.",
+  "description": "Aventa by NanaGraphy: static site with a small set of Vercel serverless functions for booking notifications and admin image uploads.",
   "dependencies": {
     "@vercel/blob": "^2.8.0"
   }
