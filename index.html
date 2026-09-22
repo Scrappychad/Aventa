@@ -25,15 +25,26 @@
 
 <main>
   <section class="ng-hero">
-    <div class="ng-hero-media" data-slot="nanagraphy-hero"></div>
-    <div class="ng-hero-overlay"></div>
-    <div class="wrap ng-hero-content">
-      <span class="eyebrow">NanaGraphy</span>
-      <h1>Photography that feels like you.</h1>
-      <p class="lede">Brand, personal, and lifestyle photography — plus the editing that makes every frame worth keeping. Based on real moments, not stiff poses.</p>
-      <div class="hero-actions">
-        <a href="#work" class="btn on-ink">See the work</a>
-        <a href="/aventa" class="btn ghost">Explore Aventa →</a>
+    <div class="wrap ng-hero-grid">
+      <div class="ng-hero-text">
+        <span class="eyebrow">NanaGraphy</span>
+        <h1>Photography that feels like you.</h1>
+        <p class="lede">Real moments, not stiff poses — plus the editing that makes every frame worth keeping.</p>
+        <div class="hero-actions">
+          <a href="#work" class="btn on-ink">View Portfolio</a>
+          <a href="/aventa" class="btn ghost">Explore Aventa →</a>
+        </div>
+      </div>
+      <div class="ng-hero-collage">
+        <div class="ng-collage-photo ng-collage-main" data-slot="nanagraphy-hero">
+          <span class="ng-collage-tag">Lifestyle</span>
+        </div>
+        <div class="ng-collage-photo ng-collage-accent-1" data-slot="nanagraphy-hero-accent-1">
+          <span class="ng-collage-tag">Brand</span>
+        </div>
+        <div class="ng-collage-photo ng-collage-accent-2" data-slot="nanagraphy-hero-accent-2">
+          <span class="ng-collage-tag">Personal</span>
+        </div>
       </div>
     </div>
   </section>

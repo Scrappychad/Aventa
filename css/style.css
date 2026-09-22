@@ -509,22 +509,31 @@ section{ padding:88px 0; }
    the same colors and type but reads as an editorial photography
    portfolio: a full-bleed hero photo instead of a boxed graphic, and a
    plain numbered list instead of cards for Services. */
-.ng-hero{ position:relative; min-height:82vh; display:flex; align-items:flex-end; overflow:hidden; }
-.ng-hero-media{
-  position:absolute; inset:0; background-size:cover; background-position:center;
+.ng-hero{ padding:72px 0 96px; overflow:hidden; }
+.ng-hero-grid{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+.ng-hero-text .eyebrow{ display:block; margin-bottom:16px; }
+.ng-hero-text h1{ margin-bottom:18px; }
+.ng-hero-collage{ position:relative; height:480px; }
+.ng-collage-photo{
+  position:absolute; border-radius:4px; overflow:hidden;
+  background-size:cover; background-position:center;
   background:linear-gradient(150deg,#2A2630,#5C2A3A 55%,#17151B);
+  box-shadow:0 24px 50px -20px rgba(23,21,27,0.35);
 }
-.ng-hero-overlay{
-  position:absolute; inset:0;
-  background:linear-gradient(180deg, rgba(23,21,27,0.05) 0%, rgba(23,21,27,0.92) 100%);
+.ng-collage-main{ width:60%; height:100%; left:0; top:0; z-index:1; }
+.ng-collage-accent-1{ width:44%; height:44%; right:0; top:0; z-index:2; }
+.ng-collage-accent-2{ width:44%; height:44%; right:0; bottom:0; z-index:3; border:5px solid var(--paper); }
+.ng-collage-tag{
+  position:absolute; left:12px; bottom:10px; z-index:2;
+  font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase;
+  color:rgba(245,239,227,0.92); background:rgba(23,21,27,0.4); padding:4px 10px; border-radius:999px;
 }
-.ng-hero-content{ position:relative; z-index:2; padding:0 0 84px; max-width:640px; }
-.ng-hero-content .eyebrow{ color:var(--gold-bright); display:block; margin-bottom:18px; }
-.ng-hero-content h1{ color:var(--paper); margin-bottom:18px; }
-.ng-hero-content p{ color:rgba(245,239,227,0.82); }
-.ng-hero-content .btn.ghost{ border-color:var(--paper); color:var(--paper); }
-.ng-hero-content .btn.ghost:hover{ background:var(--paper); color:var(--ink); }
-@media (max-width:640px){ .ng-hero{ min-height:72vh; } .ng-hero-content{ padding-bottom:48px; } }
+@media (max-width:900px){
+  .ng-hero-grid{ grid-template-columns:1fr; gap:36px; }
+  .ng-hero{ padding:48px 0 64px; }
+  .ng-hero-collage{ height:400px; order:-1; }
+}
+@media (max-width:480px){ .ng-hero-collage{ height:320px; } }
 
 .ng-service-list{ display:flex; flex-direction:column; }
 .ng-service{ display:flex; gap:28px; padding:32px 0; border-top:1px solid var(--line); align-items:flex-start; }

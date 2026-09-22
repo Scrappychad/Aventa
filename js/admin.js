@@ -19,7 +19,9 @@ const SLOT_GROUPS = [
   {
     title: "NanaGraphy landing page",
     slots: [
-      { id: "nanagraphy-hero", label: "Hero photo" },
+      { id: "nanagraphy-hero", label: "Hero photo (large, tagged Lifestyle)" },
+      { id: "nanagraphy-hero-accent-1", label: "Hero photo (small, tagged Brand)" },
+      { id: "nanagraphy-hero-accent-2", label: "Hero photo (small, tagged Personal)" },
       { id: "nanagraphy-sample-1", label: "Sample work 1" },
       { id: "nanagraphy-sample-2", label: "Sample work 2" },
       { id: "nanagraphy-sample-3", label: "Sample work 3" },
