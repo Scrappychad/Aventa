@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book an Aventa | NanaGraphy</title>
 <meta name="description" content="Book an Aventa for yourself or gift one to someone else. Secure payment via Paystack.">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="/css/style.css">
 <noscript><style>.reveal{opacity:1 !important;transform:none !important;}</style></noscript>
 
 </head>
@@ -13,16 +13,16 @@
 
 <header class="site-header">
   <div class="wrap nav">
-    <a href="/" class="brand">Aventa <span class="sub">by NanaGraphy</span></a>
+    <a href="/aventa" class="brand">Aventa <span class="sub">by NanaGraphy</span></a>
     <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     <nav class="nav-links">
-      <a href="/">Home</a>
-      <a href="/about">About</a>
-      <a href="/packages">Packages</a>
-      <a href="/gallery">Gallery</a>
-      <a href="/gift">Gift Aventa</a>
-      <a href="/contact">Contact</a>
-      <a href="/book" class="nav-cta">Book an Aventa</a>
+      <a href="/aventa">Home</a>
+      <a href="/aventa/about">About</a>
+      <a href="/aventa/packages">Packages</a>
+      <a href="/aventa/gallery">Gallery</a>
+      <a href="/aventa/gift">Gift Aventa</a>
+      <a href="/aventa/contact">Contact</a>
+      <a href="/aventa/book" class="nav-cta">Book an Aventa</a>
     </nav>
   </div>
 </header>
@@ -93,7 +93,7 @@
           <div data-gift-fields style="display:none; margin-top:8px; padding-top:20px; border-top:1px dashed var(--line);">
             <div class="merch-teaser" style="margin-bottom:20px;">
               <span class="tag">Included</span>
-              <span class="text">Your gift comes with a personalized keepsake card — their name, your message, made for them.</span>
+              <span class="text">Your gift comes with a personalized keepsake card: their name, your message, made for them.</span>
             </div>
             <h3 style="margin-bottom:16px;">Recipient details</h3>
             <div class="field">
@@ -103,7 +103,7 @@
             </div>
             <div class="grid-2">
               <div class="field">
-                <label for="recipientPhone">Recipient's phone (optional)</label>
+                <label for="recipientPhone">Recipient's phone</label>
                 <div class="phone-field" data-recipient-phone-field>
                   <select id="recipientPhoneCode" name="recipientPhoneCode" class="phone-code" data-phone-code></select>
                   <input type="tel" id="recipientPhone" name="recipientPhone" inputmode="numeric" data-phone-number>
@@ -124,10 +124,10 @@
 
           <div data-brand-inquiry-block style="display:none; margin-top:8px; padding-top:20px; border-top:1px dashed var(--line);">
             <h3 style="margin-bottom:8px;">Tell us about your project</h3>
-            <p class="field-hint" style="margin-bottom:16px;">No fixed price on this one — describe what you need and Nana will follow up to discuss scope and settle on a quote together.</p>
+            <p class="field-hint" style="margin-bottom:16px;">No fixed price on this one. Describe what you need and Nana will follow up to discuss scope and settle on a quote together.</p>
             <div class="field">
               <label for="brandDetails">Project details</label>
-              <textarea id="brandDetails" name="brandDetails" placeholder="What's the project — a product shoot, campaign content, ongoing brand work? Rough timeline, deliverables, anything that helps."></textarea>
+              <textarea id="brandDetails" name="brandDetails" placeholder="What's the project? A product shoot, campaign content, ongoing brand work. Rough timeline, deliverables, anything that helps."></textarea>
               <div class="field-error" data-error-for="brandDetails"></div>
             </div>
           </div>
@@ -159,10 +159,10 @@
       <div class="footer-cols">
         <div class="footer-col">
           <h4>Explore</h4>
-          <a href="/about">About</a>
-          <a href="/packages">Packages</a>
-          <a href="/gallery">Gallery</a>
-          <a href="/gift">Gift Aventa</a>
+          <a href="/aventa/about">About</a>
+          <a href="/aventa/packages">Packages</a>
+          <a href="/aventa/gallery">Gallery</a>
+          <a href="/aventa/gift">Gift Aventa</a>
         </div>
         <div class="footer-col">
           <h4>Connect</h4>
@@ -181,6 +181,6 @@
 </footer>
 
 <script src="https://js.paystack.co/v1/inline.js"></script>
-<script src="js/main.js"></script>
+<script src="/js/main.js"></script>
 </body>
 </html>
