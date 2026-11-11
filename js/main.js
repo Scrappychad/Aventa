@@ -11,7 +11,7 @@
    ========================================================= */
 
 // CONFIGURE: replace with your live Paystack public key
-const PAYSTACK_PUBLIC_KEY = "pk_test_45e128abb6c08ce3c7afba44f0a6c538b41c2a45";
+const PAYSTACK_PUBLIC_KEY = "pk_live_f956bf5d6eeb1d670dbdd69c6c59b1d25083ddf4";
 
 // Vercel serverless function that emails Nana via Resend. No key lives
 // here - the Resend API key stays server-side inside that function.
@@ -89,8 +89,8 @@ const AVENTA_PACKAGES = [
     id: "basic",
     name: "Basic",
     tag: "A simple lifestyle session",
-    price: 20000,
-    priceLabel: "₦20,000",
+    price: 100,
+    priceLabel: "₦100",
     features: ["Lifestyle photoshoot", "7 professionally edited photos"],
     fine: "Client covers all personal expenses at the location."
   },
