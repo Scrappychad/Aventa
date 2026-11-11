@@ -89,8 +89,8 @@ const AVENTA_PACKAGES = [
     id: "basic",
     name: "Basic",
     tag: "A simple lifestyle session",
-    price: 100,
-    priceLabel: "₦100",
+    price: 20000,
+    priceLabel: "₦20,000",
     features: ["Lifestyle photoshoot", "7 professionally edited photos"],
     fine: "Client covers all personal expenses at the location."
   },
