@@ -103,7 +103,7 @@ const AVENTA_PACKAGES = [
     features: [
       "Lifestyle photoshoot",
       "7 professionally edited photos",
-      "₦10,000 toward your restaurant / location bill"
+      "Enjoy ₦10,000 credit toward your dining or location bill"
     ],
     fine: "Our most gifted package.",
     featured: true
@@ -118,7 +118,7 @@ const AVENTA_PACKAGES = [
       "Lifestyle photoshoot",
       "7 professionally edited photos",
       "1 cinematic reel",
-      "₦20,000 toward your restaurant / location bill"
+      "Enjoy ₦20,000 credit toward your dining or location bill"
     ],
     fine: "Final price depends on location and add-ons."
   },
